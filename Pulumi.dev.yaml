@@ -1,3 +1,4 @@
 config:
   gcp:project:
     secure: AAABAO/M7TszDSNlqdoUDt+4Pgyip6SIvfA+peYNgVfFRDG42djYO6N8+chSjkAtdP5W9A==
+  gcp:region: us-central1
