@@ -7,7 +7,7 @@ export interface EnableServiceArgs {
 
 export class EnableService extends pulumi.ComponentResource {
     public readonly firebaseService: gcp.projects.Service;
-    public readonly apphostingService: gcp.projects.Service;
+    public readonly appHostingService: gcp.projects.Service;
 
     constructor(name: string, args: EnableServiceArgs, opts?: pulumi.ComponentResourceOptions) {
         super("custom:components:EnableService", name, args, opts);
@@ -18,7 +18,7 @@ export class EnableService extends pulumi.ComponentResource {
             disableOnDestroy: false,
         }, { parent: this });
 
-        this.apphostingService = new gcp.projects.Service(`${name}-apphosting`, {
+        this.appHostingService = new gcp.projects.Service(`${name}-apphosting`, {
             project: args.projectId,
             service: "firebaseapphosting.googleapis.com",
             disableOnDestroy: false,
@@ -26,7 +26,7 @@ export class EnableService extends pulumi.ComponentResource {
 
         this.registerOutputs({
             firebaseService: this.firebaseService,
-            apphostingService: this.apphostingService,
+            appHostingService: this.appHostingService,
         });
     }
 }

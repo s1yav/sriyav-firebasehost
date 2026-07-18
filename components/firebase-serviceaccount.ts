@@ -7,43 +7,85 @@ export interface FirebaseServiceAccountArgs {
 }
 
 export class FirebaseServiceAccount extends pulumi.ComponentResource {
-    public readonly appHostingComputeSa: gcp.serviceaccount.Account;
-    public readonly appHostingSaRunner: gcp.projects.IAMMember;
-    public readonly crossProjectBuildEditor: gcp.projects.IAMMember;
-    public readonly crossProjectBuildIamAdmin: gcp.projects.IAMMember;
+    public readonly appHostingServiceAccountCompute: gcp.serviceaccount.Account;
+    public readonly appHostingIamMemberRunner: gcp.projects.IAMMember;
+    public readonly crossProjectIamMemberEditor: gcp.projects.IAMMember;
+    public readonly crossProjectIamMemberIamAdmin: gcp.projects.IAMMember;
 
     constructor(name: string, args: FirebaseServiceAccountArgs, opts?: pulumi.ComponentResourceOptions) {
-        super("custom:components:FirebaseServiceAccount", name, args, opts);
+        super("custom:components:FirebaseServiceAccount", name, args, {
+            ...opts,
+            aliases: [
+                { type: "custom:components:PlatformIam" },
+                { type: "custom:components:ServiceAccount" },
+                { type: "custom:components:firebaseServiceAccount" },
+            ],
+        });
 
-        this.appHostingComputeSa = new gcp.serviceaccount.Account(`${name}-compute-sa`, {
+        const stack = pulumi.getStack();
+        const project = pulumi.getProject();
+
+        this.appHostingServiceAccountCompute = new gcp.serviceaccount.Account(`${name}-compute-sa`, {
             project: args.projectId,
             accountId: "firebase-app-hosting-compute",
             displayName: "Firebase App Hosting compute service account",
-        }, { parent: this });
+        }, { 
+            parent: this,
+            aliases: [
+                `urn:pulumi:${stack}::${project}::custom:components:PlatformIam$gcp:serviceaccount/account:Account::${name}-compute-sa`,
+                `urn:pulumi:${stack}::${project}::custom:components:ServiceAccount$gcp:serviceaccount/account:Account::${name}-compute-sa`,
+                `urn:pulumi:${stack}::${project}::custom:components:FirebaseServiceAccount$gcp:serviceaccount/account:Account::${name}-compute-sa`,
+                `urn:pulumi:${stack}::${project}::custom:components:firebaseServiceAccount$gcp:serviceaccount/account:Account::${name}-compute-sa`,
+            ],
+        });
 
-        this.appHostingSaRunner = new gcp.projects.IAMMember(`${name}-sa-runner`, {
+        this.appHostingIamMemberRunner = new gcp.projects.IAMMember(`${name}-sa-runner`, {
             project: args.projectId,
             role: "roles/firebaseapphosting.computeRunner",
-            member: pulumi.interpolate`serviceAccount:${this.appHostingComputeSa.email}`,
-        }, { parent: this });
+            member: pulumi.interpolate`serviceAccount:${this.appHostingServiceAccountCompute.email}`,
+        }, { 
+            parent: this,
+            aliases: [
+                `urn:pulumi:${stack}::${project}::custom:components:PlatformIam$gcp:projects/iAMMember:IAMMember::${name}-sa-runner`,
+                `urn:pulumi:${stack}::${project}::custom:components:ServiceAccount$gcp:projects/iAMMember:IAMMember::${name}-sa-runner`,
+                `urn:pulumi:${stack}::${project}::custom:components:FirebaseServiceAccount$gcp:projects/iAMMember:IAMMember::${name}-sa-runner`,
+                `urn:pulumi:${stack}::${project}::custom:components:firebaseServiceAccount$gcp:projects/iAMMember:IAMMember::${name}-sa-runner`,
+            ],
+        });
 
-        this.crossProjectBuildEditor = new gcp.projects.IAMMember(`${name}-cross-project-editor`, {
+        this.crossProjectIamMemberEditor = new gcp.projects.IAMMember(`${name}-cross-project-editor`, {
             project: args.projectId,
             role: "roles/editor",
             member: pulumi.interpolate`serviceAccount:${args.gitopsCloudbuildSa}`,
-        }, { parent: this });
+        }, { 
+            parent: this,
+            aliases: [
+                `urn:pulumi:${stack}::${project}::custom:components:PlatformIam$gcp:projects/iAMMember:IAMMember::${name}-cross-project-editor`,
+                `urn:pulumi:${stack}::${project}::custom:components:ServiceAccount$gcp:projects/iAMMember:IAMMember::${name}-cross-project-editor`,
+                `urn:pulumi:${stack}::${project}::custom:components:FirebaseServiceAccount$gcp:projects/iAMMember:IAMMember::${name}-cross-project-editor`,
+                `urn:pulumi:${stack}::${project}::custom:components:firebaseServiceAccount$gcp:projects/iAMMember:IAMMember::${name}-cross-project-editor`,
+            ],
+        });
 
-        this.crossProjectBuildIamAdmin = new gcp.projects.IAMMember(`${name}-cross-project-iam-admin`, {
+        this.crossProjectIamMemberIamAdmin = new gcp.projects.IAMMember(`${name}-cross-project-iam-admin`, {
             project: args.projectId,
             role: "roles/resourcemanager.projectIamAdmin",
             member: pulumi.interpolate`serviceAccount:${args.gitopsCloudbuildSa}`,
-        }, { parent: this });
+        }, { 
+            parent: this,
+            aliases: [
+                `urn:pulumi:${stack}::${project}::custom:components:PlatformIam$gcp:projects/iAMMember:IAMMember::${name}-cross-project-iam-admin`,
+                `urn:pulumi:${stack}::${project}::custom:components:ServiceAccount$gcp:projects/iAMMember:IAMMember::${name}-cross-project-iam-admin`,
+                `urn:pulumi:${stack}::${project}::custom:components:FirebaseServiceAccount$gcp:projects/iAMMember:IAMMember::${name}-cross-project-iam-admin`,
+                `urn:pulumi:${stack}::${project}::custom:components:firebaseServiceAccount$gcp:projects/iAMMember:IAMMember::${name}-cross-project-iam-admin`,
+            ],
+        });
 
         this.registerOutputs({
-            appHostingComputeSa: this.appHostingComputeSa,
-            appHostingSaRunner: this.appHostingSaRunner,
-            crossProjectBuildEditor: this.crossProjectBuildEditor,
-            crossProjectBuildIamAdmin: this.crossProjectBuildIamAdmin,
+            appHostingServiceAccountCompute: this.appHostingServiceAccountCompute,
+            appHostingIamMemberRunner: this.appHostingIamMemberRunner,
+            crossProjectIamMemberEditor: this.crossProjectIamMemberEditor,
+            crossProjectIamMemberIamAdmin: this.crossProjectIamMemberIamAdmin,
         });
     }
 }

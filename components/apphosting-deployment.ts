@@ -8,8 +8,8 @@ export interface AppHostingDeploymentArgs {
     region: pulumi.Input<string>;
     appId: pulumi.Input<string>;
     computeServiceAccountEmail: pulumi.Input<string>;
-    apphostingService: gcp.projects.Service;
-    appHostingSaRunner: gcp.projects.IAMMember;
+    appHostingService: gcp.projects.Service;
+    appHostingIamMemberRunner: gcp.projects.IAMMember;
 }
 
 export class AppHostingDeployment extends pulumi.ComponentResource {
@@ -28,7 +28,7 @@ export class AppHostingDeployment extends pulumi.ComponentResource {
             appId: args.appId,
             servingLocality: "GLOBAL_ACCESS",
             serviceAccount: args.computeServiceAccountEmail,
-        }, { parent: this, dependsOn: [args.apphostingService, args.appHostingSaRunner] });
+        }, { parent: this, dependsOn: [args.appHostingService, args.appHostingIamMemberRunner] });
 
         // Load the portfolio docker image commit SHA from the config file
         let commitSha = "latest";

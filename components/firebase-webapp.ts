@@ -9,7 +9,7 @@ export interface FirebaseWebAppArgs {
 
 export class FirebaseWebApp extends pulumi.ComponentResource {
     public readonly firebaseProject: gcp.firebase.Project;
-    public readonly webApp: gcp.firebase.WebApp;
+    public readonly firebaseWebApp: gcp.firebase.WebApp;
 
     constructor(name: string, args: FirebaseWebAppArgs, opts?: pulumi.ComponentResourceOptions) {
         super("custom:components:FirebaseWebApp", name, args, opts);
@@ -18,14 +18,14 @@ export class FirebaseWebApp extends pulumi.ComponentResource {
             project: args.projectId,
         }, { parent: this, dependsOn: [args.firebaseService] });
 
-        this.webApp = new gcp.firebase.WebApp(`${name}-web-app`, {
+        this.firebaseWebApp = new gcp.firebase.WebApp(`${name}-web-app`, {
             project: args.projectId,
             displayName: args.displayName,
         }, { parent: this, dependsOn: [this.firebaseProject] });
 
         this.registerOutputs({
             firebaseProject: this.firebaseProject,
-            webApp: this.webApp,
+            firebaseWebApp: this.firebaseWebApp,
         });
     }
 }
