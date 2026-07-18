@@ -19,7 +19,15 @@ export class FirebaseAppHostingDeployment extends pulumi.ComponentResource {
     public readonly appHostingDomain: gcp.firebase.AppHostingDomain;
 
     constructor(name: string, args: FirebaseAppHostingDeploymentArgs, opts?: pulumi.ComponentResourceOptions) {
-        super("custom:components:AppHostingDeployment", name, args, opts);
+        super("custom:components:FirebaseAppHostingDeployment", name, args, {
+            ...opts,
+            aliases: [
+                { type: "custom:components:AppHostingDeployment" },
+            ],
+        });
+
+        const stack = pulumi.getStack();
+        const project = pulumi.getProject();
 
         this.appHostingBackend = new gcp.firebase.AppHostingBackend(`${name}-backend`, {
             project: args.projectId,
@@ -28,7 +36,13 @@ export class FirebaseAppHostingDeployment extends pulumi.ComponentResource {
             appId: args.appId,
             servingLocality: "GLOBAL_ACCESS",
             serviceAccount: args.computeServiceAccountEmail,
-        }, { parent: this, dependsOn: [args.appHostingService, args.appHostingIamMemberRunner] });
+        }, { 
+            parent: this, 
+            dependsOn: [args.appHostingService, args.appHostingIamMemberRunner],
+            aliases: [
+                `urn:pulumi:${stack}::${project}::custom:components:AppHostingDeployment$gcp:firebase/appHostingBackend:AppHostingBackend::${name}-backend`,
+            ],
+        });
 
         // Load the portfolio docker image commit SHA from the config file
         let commitSha = "latest";
@@ -59,7 +73,13 @@ export class FirebaseAppHostingDeployment extends pulumi.ComponentResource {
                     image: imageUrl,
                 },
             },
-        }, { parent: this, dependsOn: [this.appHostingBackend] });
+        }, { 
+            parent: this, 
+            dependsOn: [this.appHostingBackend],
+            aliases: [
+                `urn:pulumi:${stack}::${project}::custom:components:AppHostingDeployment$gcp:firebase/appHostingBuild:AppHostingBuild::${name}-build`,
+            ],
+        });
 
         this.appHostingTraffic = new gcp.firebase.AppHostingTraffic(`${name}-traffic`, {
             project: args.projectId,
@@ -71,14 +91,26 @@ export class FirebaseAppHostingDeployment extends pulumi.ComponentResource {
                     percent: 100,
                 }],
             },
-        }, { parent: this, dependsOn: [this.appHostingBuild] });
+        }, { 
+            parent: this, 
+            dependsOn: [this.appHostingBuild],
+            aliases: [
+                `urn:pulumi:${stack}::${project}::custom:components:AppHostingDeployment$gcp:firebase/appHostingTraffic:AppHostingTraffic::${name}-traffic`,
+            ],
+        });
 
         this.appHostingDomain = new gcp.firebase.AppHostingDomain(`${name}-domain`, {
             project: args.projectId,
             location: args.region,
             backend: this.appHostingBackend.backendId,
             domainId: "sriyav.com",
-        }, { parent: this, dependsOn: [this.appHostingBackend] });
+        }, { 
+            parent: this, 
+            dependsOn: [this.appHostingBackend],
+            aliases: [
+                `urn:pulumi:${stack}::${project}::custom:components:AppHostingDeployment$gcp:firebase/appHostingDomain:AppHostingDomain::${name}-domain`,
+            ],
+        });
 
         this.registerOutputs({
             appHostingBackend: this.appHostingBackend,

@@ -14,11 +14,11 @@ export class FirebaseWebApp extends pulumi.ComponentResource {
     constructor(name: string, args: FirebaseWebAppArgs, opts?: pulumi.ComponentResourceOptions) {
         super("custom:components:FirebaseWebApp", name, args, opts);
 
-        this.firebaseProject = new gcp.firebase.Project(`${name}-project`, {
+        this.firebaseProject = new gcp.firebase.Project(`${name}-firebase-project`, {
             project: args.projectId,
         }, { parent: this, dependsOn: [args.firebaseService] });
 
-        this.firebaseWebApp = new gcp.firebase.WebApp(`${name}-web-app`, {
+        this.firebaseWebApp = new gcp.firebase.WebApp(`${name}-firebase-webapp`, {
             project: args.projectId,
             displayName: args.displayName,
         }, { parent: this, dependsOn: [this.firebaseProject] });
