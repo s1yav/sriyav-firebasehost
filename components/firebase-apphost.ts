@@ -107,12 +107,7 @@ export class FirebaseApphost extends pulumi.ComponentResource {
      */
     constructor(name: string, args: FirebaseApphostArgs, opts?: pulumi.ComponentResourceOptions) {
         const stack = pulumi.getStack();
-        const componentOpts = pulumi.mergeOptions(opts, {
-            aliases: [
-                { type: "custom:components:FirebaseApphost", name: "sriyav-portfolio" }
-            ]
-        });
-        super("custom:components:FirebaseApphost", name, args, componentOpts);
+        super("custom:components:FirebaseApphost", name, args, opts);
 
         this.appHostingBackend = new gcp.firebase.AppHostingBackend(`${name}-appHostingBackend`, {
             project: args.projectId,
