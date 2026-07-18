@@ -27,24 +27,14 @@ export class FirebaseAppHostingServiceAccount extends pulumi.ComponentResource {
     public readonly firebaseAppHostingServiceAccount: gcp.serviceaccount.Account;
 
     /**
-     * The IAM binding granting the App Hosting runner role to the compute service account.
-     */
-    public readonly firebaseAppHostingIamMemberRunner: gcp.projects.IAMMember;
-
-    /**
-     * The cross-project Editor IAM binding for the GitOps Cloud Build service account.
-     */
-    public readonly crossProjectIamMemberEditor: gcp.projects.IAMMember;
-
-    /**
-     * The cross-project Project IAM Admin binding for the GitOps Cloud Build service account.
-     */
-    public readonly crossProjectIamMemberIamAdmin: gcp.projects.IAMMember;
-
-    /**
      * The IAM member binding allowing the Cloud Build service account to impersonate this service account.
      */
     public readonly impersonationIamMember: gcp.serviceaccount.IAMMember;
+
+    /**
+     * The project IAM member that allows owner access to the firebase app hosting service on the project level
+     */
+    public readonly firebaseAppHostingServiceAccountIamMember: gcp.projects.IAMMember;
 
     /**
      * Creates a new instance of FirebaseAppHostingServiceAccount.
@@ -62,25 +52,13 @@ export class FirebaseAppHostingServiceAccount extends pulumi.ComponentResource {
             displayName: "Firebase App Hosting compute service account",
         }, { parent: this });
 
-        this.firebaseAppHostingIamMemberRunner = new gcp.projects.IAMMember(`${name}-iammember-runner`, {
+        this.firebaseAppHostingServiceAccountIamMember = new gcp.projects.IAMMember(`${name}-iam-member`, {
             project: args.projectId,
-            role: "roles/firebaseapphosting.computeRunner",
+            role: "roles/owner",
             member: pulumi.interpolate`serviceAccount:${this.firebaseAppHostingServiceAccount.email}`,
         }, { parent: this });
 
-        this.crossProjectIamMemberEditor = new gcp.projects.IAMMember(`${name}-cross-project-iammember-editor`, {
-            project: args.projectId,
-            role: "roles/editor",
-            member: pulumi.interpolate`serviceAccount:${args.gitopsCloudbuildSa}`,
-        }, { parent: this });
-
-        this.crossProjectIamMemberIamAdmin = new gcp.projects.IAMMember(`${name}-cross-project-iammember-iamadmin`, {
-            project: args.projectId,
-            role: "roles/resourcemanager.projectIamAdmin",
-            member: pulumi.interpolate`serviceAccount:${args.gitopsCloudbuildSa}`,
-        }, { parent: this });
-
-        this.impersonationIamMember = new gcp.serviceaccount.IAMMember(`${name}-impersonation`, {
+        this.impersonationIamMember = new gcp.serviceaccount.IAMMember(`${name}-impersonation-iam-memeber`, {
             serviceAccountId: this.firebaseAppHostingServiceAccount.name,
             role: "roles/iam.serviceAccountTokenCreator",
             member: pulumi.interpolate`serviceAccount:${args.gitopsCloudbuildSa}`,
@@ -88,9 +66,7 @@ export class FirebaseAppHostingServiceAccount extends pulumi.ComponentResource {
 
         this.registerOutputs({
             firebaseAppHostingServiceAccount: this.firebaseAppHostingServiceAccount,
-            firebaseAppHostingIamMemberRunner: this.firebaseAppHostingIamMemberRunner,
-            crossProjectIamMemberEditor: this.crossProjectIamMemberEditor,
-            crossProjectIamMemberIamAdmin: this.crossProjectIamMemberIamAdmin,
+            firebaseAppHostingServiceAccountIamMember: this.firebaseAppHostingServiceAccountIamMember,
             impersonationIamMember: this.impersonationIamMember,
         });
     }

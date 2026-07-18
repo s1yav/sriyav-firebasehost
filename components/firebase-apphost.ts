@@ -33,9 +33,9 @@ export interface FirebaseApphostArgs {
     appHostingService: gcp.projects.Service;
 
     /**
-     * The runner IAM binding resource dependency.
+     * The service account IAM member resource dependency.
      */
-    appHostingIamMemberRunner: gcp.projects.IAMMember;
+    appHostingServiceAccountIamMember: gcp.projects.IAMMember;
 
     /**
      * The GitOps configuration project ID.
@@ -123,7 +123,7 @@ export class FirebaseApphost extends pulumi.ComponentResource {
             serviceAccount: args.computeServiceAccountEmail,
         }, {
             parent: this,
-            dependsOn: [args.appHostingService, args.appHostingIamMemberRunner],
+            dependsOn: [args.appHostingService, args.appHostingServiceAccountIamMember],
             aliases: [
                 `urn:pulumi:${stack}::sriyav-firebasehost::custom:components:FirebaseApphost$gcp:firebase/appHostingBackend:AppHostingBackend::sriyav-portfolio-appHostingBackend`
             ]

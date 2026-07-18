@@ -47,7 +47,7 @@ const sriyavFirebaseApphost = new FirebaseApphost(`${stackPrefix}-firebase-appho
     appId: sriyavFirebaseWebApp.firebaseWebApp.appId,
     computeServiceAccountEmail: sriyavFirebaseAppHostingServiceAccount.firebaseAppHostingServiceAccount.email,
     appHostingService: sriyavProjectsServiceEnable.firebaseapphostingService,
-    appHostingIamMemberRunner: sriyavFirebaseAppHostingServiceAccount.firebaseAppHostingIamMemberRunner,
+    appHostingServiceAccountIamMember: sriyavFirebaseAppHostingServiceAccount.firebaseAppHostingServiceAccountIamMember,
     gitopsProjectId,
     dockerRegistryName,
     domainId,
