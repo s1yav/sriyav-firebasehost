@@ -35,30 +35,17 @@ export class ProjectsServiceEnable extends pulumi.ComponentResource {
     constructor(name: string, args: ProjectsServiceEnableArgs, opts?: pulumi.ComponentResourceOptions) {
         super("custom:components:ProjectsServiceEnable", name, args, opts);
 
-        const stack = pulumi.getStack();
-        const project = pulumi.getProject();
-
         this.firebaseService = new gcp.projects.Service(`${name}-firebase-api`, {
             project: args.projectId,
             service: "firebase.googleapis.com",
             disableOnDestroy: false,
-        }, { 
-            parent: this,
-            aliases: [
-                `urn:pulumi:${stack}::${project}::custom:components:ProjectsServiceEnable$gcp:projects/service:Service::sriyav-services-firebase-api`,
-            ],
-        });
+        }, { parent: this });
 
         this.firebaseapphostingService = new gcp.projects.Service(`${name}-firebaseapphosting-api`, {
             project: args.projectId,
             service: "firebaseapphosting.googleapis.com",
             disableOnDestroy: false,
-        }, { 
-            parent: this,
-            aliases: [
-                `urn:pulumi:${stack}::${project}::custom:components:ProjectsServiceEnable$gcp:projects/service:Service::sriyav-services-firebaseapphosting-api`,
-            ],
-        });
+        }, { parent: this });
 
         this.registerOutputs({
             firebaseService: this.firebaseService,
