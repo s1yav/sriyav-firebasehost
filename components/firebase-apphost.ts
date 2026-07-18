@@ -3,30 +3,108 @@ import * as gcp from "@pulumi/gcp";
 import * as fs from "fs";
 import * as path from "path";
 
+/**
+ * Arguments for configuring and deploying the Firebase App Hosting resources.
+ */
 export interface FirebaseApphostArgs {
+    /**
+     * The Google Cloud project ID.
+     */
     projectId: pulumi.Input<string>;
+
+    /**
+     * The Google Cloud region to deploy the App Hosting backend to.
+     */
     region: pulumi.Input<string>;
+
+    /**
+     * The associated Firebase Web App ID.
+     */
     appId: pulumi.Input<string>;
+
+    /**
+     * The email of the compute service account used by App Hosting.
+     */
     computeServiceAccountEmail: pulumi.Input<string>;
+
+    /**
+     * The enabled projects service resource dependency.
+     */
     appHostingService: gcp.projects.Service;
+
+    /**
+     * The runner IAM binding resource dependency.
+     */
     appHostingIamMemberRunner: gcp.projects.IAMMember;
 
-    // Configuration parameters passed as arguments
+    /**
+     * The GitOps configuration project ID.
+     */
     gitopsProjectId: pulumi.Input<string>;
+
+    /**
+     * The cross-project GitOps Artifact Registry Docker repository name.
+     */
     dockerRegistryName: pulumi.Input<string>;
+
+    /**
+     * The domain name to map to the App Hosting backend (e.g. sriyav.com).
+     */
     domainId: pulumi.Input<string>;
+
+    /**
+     * The preferred git commit tag/version to fallback to (default is latest).
+     */
     preferredCommit: string;
+
+    /**
+     * The name of the JSON file containing the build image tag.
+     */
     imageTagFile: string;
+
+    /**
+     * The name of the website source repository (e.g. sriyav-portfolio).
+     */
     websiteServerRepoName: pulumi.Input<string>;
+
+    /**
+     * The serving locality configuration (e.g. GLOBAL_ACCESS).
+     */
     servingLocality: pulumi.Input<string>;
 }
 
+/**
+ * A ComponentResource that deploys the Firebase App Hosting Backend, provisions builds,
+ * manages traffic splits, and configures custom domain mappings.
+ */
 export class FirebaseApphost extends pulumi.ComponentResource {
+    /**
+     * The Firebase App Hosting Backend instance.
+     */
     public readonly appHostingBackend: gcp.firebase.AppHostingBackend;
+
+    /**
+     * The Firebase App Hosting Build instance representing the deployed web application version.
+     */
     public readonly appHostingBuild: gcp.firebase.AppHostingBuild;
+
+    /**
+     * The Firebase App Hosting Traffic split configuration directing 100% traffic to the build.
+     */
     public readonly appHostingTraffic: gcp.firebase.AppHostingTraffic;
+
+    /**
+     * The Custom Domain mapping for the App Hosting backend.
+     */
     public readonly appHostingDomain: gcp.firebase.AppHostingDomain;
 
+    /**
+     * Creates a new instance of FirebaseApphost.
+     *
+     * @param name The logical name of the resource.
+     * @param args The arguments to configure the resource.
+     * @param opts A bag of options that controls this resource's behavior.
+     */
     constructor(name: string, args: FirebaseApphostArgs, opts?: pulumi.ComponentResourceOptions) {
         super("custom:components:FirebaseApphost", name, args, opts);
 
@@ -87,6 +165,9 @@ export class FirebaseApphost extends pulumi.ComponentResource {
         });
     }
 
+    /**
+     * Resolves the Docker image tag/SHA and returns the formatted Artifact Registry URL and build suffix.
+     */
     private getDockerImage(
         region: pulumi.Input<string>,
         gitopsProjectId: pulumi.Input<string>,

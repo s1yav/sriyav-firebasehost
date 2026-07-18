@@ -1,17 +1,53 @@
 import * as pulumi from "@pulumi/pulumi";
 import * as gcp from "@pulumi/gcp";
 
+/**
+ * Arguments for creating Firebase service accounts and configuring cross-project IAM permissions.
+ */
 export interface FirebaseServiceAccountArgs {
+    /**
+     * The Google Cloud project ID.
+     */
     projectId: pulumi.Input<string>;
+
+    /**
+     * The email of the cross-project GitOps Cloud Build service account.
+     */
     gitopsCloudbuildSa: pulumi.Input<string>;
 }
 
+/**
+ * A ComponentResource that provisions the App Hosting Compute service account, configures compute runner IAM bindings,
+ * and grants cross-project permissions (Editor and project IAM Admin) to the GitOps Cloud Build service account.
+ */
 export class FirebaseServiceAccount extends pulumi.ComponentResource {
+    /**
+     * The custom Firebase App Hosting compute service account.
+     */
     public readonly appHostingServiceAccountCompute: gcp.serviceaccount.Account;
+
+    /**
+     * The IAM binding granting the App Hosting runner role to the compute service account.
+     */
     public readonly appHostingIamMemberRunner: gcp.projects.IAMMember;
+
+    /**
+     * The cross-project Editor IAM binding for the GitOps Cloud Build service account.
+     */
     public readonly crossProjectIamMemberEditor: gcp.projects.IAMMember;
+
+    /**
+     * The cross-project Project IAM Admin binding for the GitOps Cloud Build service account.
+     */
     public readonly crossProjectIamMemberIamAdmin: gcp.projects.IAMMember;
 
+    /**
+     * Creates a new instance of FirebaseServiceAccount.
+     *
+     * @param name The logical name of the resource.
+     * @param args The arguments to configure the resource.
+     * @param opts A bag of options that controls this resource's behavior.
+     */
     constructor(name: string, args: FirebaseServiceAccountArgs, opts?: pulumi.ComponentResourceOptions) {
         super("custom:components:FirebaseServiceAccount", name, args, opts);
 

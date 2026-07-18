@@ -47,9 +47,7 @@ const sriyavFirebaseApphost = new FirebaseApphost("sriyav-portfolio", {
     computeServiceAccountEmail: sriyavFirebaseServiceAccount.appHostingServiceAccountCompute.email,
     appHostingService: sriyavProjectsServiceEnable.firebaseapphostingService,
     appHostingIamMemberRunner: sriyavFirebaseServiceAccount.appHostingIamMemberRunner,
-
-    // Config arguments passed explicitly
-    gitopsProjectId: gitopsProjectId,
+    gitopsProjectId,
     dockerRegistryName,
     domainId,
     preferredCommit,
