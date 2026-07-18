@@ -7,6 +7,7 @@ steps:
       - '-c'
       - |
         npm ci
+        pulumi refresh --yes --stack sriyav-firebasehost --non-interactive
         pulumi up --yes --stack sriyav-firebasehost --non-interactive
     secretEnv:
       - 'PULUMI_ACCESS_TOKEN'
