@@ -5,7 +5,7 @@ import { PlatformIam } from "./constructs/iam";
 import { AppHostingDeployment } from "./constructs/app-hosting";
 
 // Initialize GCP Config
-const gcpConfig = new pulumi.Config("gcp");
+import { gcpConfig, stackName } from "./configuration";
 const projectId = gcpConfig.require("project");
 const region = gcpConfig.require("region");
 
