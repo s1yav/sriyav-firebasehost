@@ -13,13 +13,7 @@ export class FirebaseServiceAccount extends pulumi.ComponentResource {
     public readonly crossProjectBuildIamAdmin: gcp.projects.IAMMember;
 
     constructor(name: string, args: FirebaseServiceAccountArgs, opts?: pulumi.ComponentResourceOptions) {
-        super("custom:components:FirebaseServiceAccount", name, args, {
-            ...opts,
-            aliases: [
-                { type: "custom:components:PlatformIam" },
-                { type: "custom:components:ServiceAccount" },
-            ],
-        });
+        super("custom:components:FirebaseServiceAccount", name, args, opts);
 
         this.appHostingComputeSa = new gcp.serviceaccount.Account(`${name}-compute-sa`, {
             project: args.projectId,
