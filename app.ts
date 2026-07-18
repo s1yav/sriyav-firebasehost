@@ -1,4 +1,4 @@
-import { ProjectsServiceEnable } from "./projects-service-enable";
+import { ProjectsServiceEnable } from "./components/projects-service-enable";
 import * as pulumi from "@pulumi/pulumi";
 import { FirebaseWebApp } from "./components/firebase-webapp";
 import { FirebaseServiceAccount } from "./components/firebase-serviceaccount";
