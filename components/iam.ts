@@ -24,7 +24,7 @@ export class PlatformIam extends pulumi.ComponentResource {
         this.appHostingSaRunner = new gcp.projects.IAMMember(`${name}-sa-runner`, {
             project: args.projectId,
             role: "roles/firebaseapphosting.computeRunner",
-            member: this.appHostingComputeSa.email.apply(email => `serviceAccount:${email}`),
+            member: pulumi.interpolate`serviceAccount:${this.appHostingComputeSa.email}`,
         }, { parent: this });
 
         this.crossProjectBuildEditor = new gcp.projects.IAMMember(`${name}-cross-project-editor`, {
