@@ -2,7 +2,7 @@ import * as pulumi from "@pulumi/pulumi";
 import * as gcp from "@pulumi/gcp";
 import * as fs from "fs";
 import * as path from "path";
-import { gitopsProjectId, dockerRegistryName, domainId, preferredCommit, imageTagFile } from "../configuration";
+import { gitopsProjectId, dockerRegistryName, domainId, preferredCommit, imageTagFile, websiteServerRepoName } from "../configuration";
 
 export interface FirebaseApphostArgs {
     projectId: pulumi.Input<string>;
@@ -25,7 +25,7 @@ export class FirebaseApphost extends pulumi.ComponentResource {
         this.appHostingBackend = new gcp.firebase.AppHostingBackend(`${name}-appHostingBackend`, {
             project: args.projectId,
             location: args.region,
-            backendId: "sriyav-portfolio",
+            backendId: websiteServerRepoName,
             appId: args.appId,
             servingLocality: "GLOBAL_ACCESS",
             serviceAccount: args.computeServiceAccountEmail,
@@ -86,7 +86,7 @@ export class FirebaseApphost extends pulumi.ComponentResource {
         }
 
         // Docker image URL in gitops docker repository
-        const imageUrl = pulumi.interpolate`${region}-docker.pkg.dev/${gitopsProjectId}/${dockerRegistryName}/sriyav-portfolio:${commitSha}`;
+        const imageUrl = pulumi.interpolate`${region}-docker.pkg.dev/${gitopsProjectId}/${dockerRegistryName}/${websiteServerRepoName}:${commitSha}`;
         const buildIdSuffix = commitSha === "latest" ? "latest" : commitSha.substring(0, 7);
 
         return { imageUrl, buildIdSuffix };

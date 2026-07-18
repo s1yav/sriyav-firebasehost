@@ -5,7 +5,7 @@ import { FirebaseServiceAccount } from "./components/firebase-serviceaccount";
 import { FirebaseApphost } from "./components/firebase-apphost";
 
 // Initialize GCP Config
-import { gcpConfig, stackName } from "./configuration";
+import { gcpConfig, stackName, websiteServerRepoName } from "./configuration";
 const projectId = gcpConfig.require("project");
 const region = gcpConfig.require("region");
 
@@ -17,7 +17,7 @@ const sriyavProjectsServiceEnable = new ProjectsServiceEnable("sriyav-services",
 // 2. Initialize Firebase and Web App
 const sriyavFirebaseWebApp = new FirebaseWebApp("sriyav-portfolio", {
     projectId: projectId,
-    displayName: "sriyav-portfolio",
+    displayName: websiteServerRepoName,
     firebaseService: sriyavProjectsServiceEnable.firebaseService,
 });
 

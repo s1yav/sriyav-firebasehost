@@ -12,3 +12,4 @@ export const appConfig = new pulumi.Config();
 export const domainId = appConfig.require("domainId");
 export const preferredCommit = appConfig.require("preferredCommit");
 export const imageTagFile = appConfig.require("imageTagFile");
+export const websiteServerRepoName = appConfig.require("websiteServerRepoName");

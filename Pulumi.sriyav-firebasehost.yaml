@@ -9,3 +9,4 @@ config:
   sriyav-firebasehost:domainId: sriyav.com
   sriyav-firebasehost:preferredCommit: latest
   sriyav-firebasehost:imageTagFile: portfolio-image-tag.json
+  sriyav-firebasehost:websiteServerRepoName: sriyav-portfolio
