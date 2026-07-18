@@ -6,3 +6,6 @@ config:
     secure: AAABANG5Nbtcsv+j4Xk5ZHIs3c6ycwxRLRMdcSOkiC6voFK9p71h39jf65WD755ofQ==
   gitops:dockerRegistryName:
     secure: AAABAHKhmnGoZSti6OpCk5Xfjpo2pM5JU8XZ4hV5mbFgFxIDf/6kzkVmIDzRO+nLplep0Xca
+  sriyav-firebasehost:domainId: sriyav.com
+  sriyav-firebasehost:preferredCommit: latest
+  sriyav-firebasehost:imageTagFile: portfolio-image-tag.json

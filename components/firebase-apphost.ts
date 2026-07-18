@@ -2,7 +2,7 @@ import * as pulumi from "@pulumi/pulumi";
 import * as gcp from "@pulumi/gcp";
 import * as fs from "fs";
 import * as path from "path";
-import { gitopsProjectId, dockerRegistryName } from "../configuration";
+import { gitopsProjectId, dockerRegistryName, domainId, preferredCommit, imageTagFile } from "../configuration";
 
 export interface FirebaseApphostArgs {
     projectId: pulumi.Input<string>;
@@ -22,9 +22,6 @@ export class FirebaseApphost extends pulumi.ComponentResource {
     constructor(name: string, args: FirebaseApphostArgs, opts?: pulumi.ComponentResourceOptions) {
         super("custom:components:FirebaseApphost", name, args, opts);
 
-        const stack = pulumi.getStack();
-        const project = pulumi.getProject();
-
         this.appHostingBackend = new gcp.firebase.AppHostingBackend(`${name}-appHostingBackend`, {
             project: args.projectId,
             location: args.region,
@@ -32,13 +29,7 @@ export class FirebaseApphost extends pulumi.ComponentResource {
             appId: args.appId,
             servingLocality: "GLOBAL_ACCESS",
             serviceAccount: args.computeServiceAccountEmail,
-        }, { 
-            parent: this, 
-            dependsOn: [args.appHostingService, args.appHostingIamMemberRunner],
-            aliases: [
-                `urn:pulumi:${stack}::${project}::custom:components:FirebaseApphost$gcp:firebase/appHostingBackend:AppHostingBackend::${name}-backend`,
-            ],
-        });
+        }, { parent: this, dependsOn: [args.appHostingService, args.appHostingIamMemberRunner] });
 
         const { imageUrl, buildIdSuffix } = this.getDockerImage(args.region);
 
@@ -52,13 +43,7 @@ export class FirebaseApphost extends pulumi.ComponentResource {
                     image: imageUrl,
                 },
             },
-        }, { 
-            parent: this, 
-            dependsOn: [this.appHostingBackend],
-            aliases: [
-                `urn:pulumi:${stack}::${project}::custom:components:FirebaseApphost$gcp:firebase/appHostingBuild:AppHostingBuild::${name}-build`,
-            ],
-        });
+        }, { parent: this, dependsOn: [this.appHostingBackend] });
 
         this.appHostingTraffic = new gcp.firebase.AppHostingTraffic(`${name}-appHostingTraffic`, {
             project: args.projectId,
@@ -70,26 +55,14 @@ export class FirebaseApphost extends pulumi.ComponentResource {
                     percent: 100,
                 }],
             },
-        }, { 
-            parent: this, 
-            dependsOn: [this.appHostingBuild],
-            aliases: [
-                `urn:pulumi:${stack}::${project}::custom:components:FirebaseApphost$gcp:firebase/appHostingTraffic:AppHostingTraffic::${name}-traffic`,
-            ],
-        });
+        }, { parent: this, dependsOn: [this.appHostingBuild] });
 
         this.appHostingDomain = new gcp.firebase.AppHostingDomain(`${name}-appHostingDomain`, {
             project: args.projectId,
             location: args.region,
             backend: this.appHostingBackend.backendId,
-            domainId: "sriyav.com",
-        }, { 
-            parent: this, 
-            dependsOn: [this.appHostingBackend],
-            aliases: [
-                `urn:pulumi:${stack}::${project}::custom:components:FirebaseApphost$gcp:firebase/appHostingDomain:AppHostingDomain::${name}-domain`,
-            ],
-        });
+            domainId: domainId,
+        }, { parent: this, dependsOn: [this.appHostingBackend] });
 
         this.registerOutputs({
             appHostingBackend: this.appHostingBackend,
@@ -101,15 +74,15 @@ export class FirebaseApphost extends pulumi.ComponentResource {
 
     private getDockerImage(region: pulumi.Input<string>): { imageUrl: pulumi.Output<string>; buildIdSuffix: string } {
         // Load the portfolio docker image commit SHA from the config file
-        let commitSha = "latest";
+        let commitSha = preferredCommit;
         try {
-            const fileContent = fs.readFileSync(path.join(__dirname, "..", "portfolio-image-tag.json"), "utf8");
+            const fileContent = fs.readFileSync(path.join(__dirname, "..", imageTagFile), "utf8");
             const tagData = JSON.parse(fileContent);
             if (tagData.commitSha) {
                 commitSha = tagData.commitSha.toLowerCase().trim();
             }
         } catch (err) {
-            pulumi.log.warn(`Failed to read portfolio-image-tag.json: ${err}. Falling back to 'latest'`);
+            pulumi.log.warn(`Failed to read ${imageTagFile}: ${err}. Falling back to '${preferredCommit}'`);
         }
 
         // Docker image URL in gitops docker repository
