@@ -49,7 +49,7 @@ export class FirebaseAppHostingServiceAccount extends pulumi.ComponentResource {
      * @param opts A bag of options that controls this resource's behavior.
      */
     constructor(name: string, args: FirebaseAppHostingServiceAccountArgs, opts?: pulumi.ComponentResourceOptions) {
-        super("custom:components:FirebaseServiceAccount", name, args, opts);
+        super("custom:components:FirebaseAppHostingServiceAccount", name, args, opts);
 
         this.firebaseAppHostingServiceAccount = new gcp.serviceaccount.Account(`${name}-sa`, {
             project: args.projectId,
