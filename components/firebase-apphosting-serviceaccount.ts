@@ -4,7 +4,7 @@ import * as gcp from "@pulumi/gcp";
 /**
  * Arguments for creating Firebase service accounts and configuring cross-project IAM permissions.
  */
-export interface FirebaseServiceAccountArgs {
+export interface FirebaseAppHostingServiceAccountArgs {
     /**
      * The Google Cloud project ID.
      */
@@ -20,16 +20,16 @@ export interface FirebaseServiceAccountArgs {
  * A ComponentResource that provisions the App Hosting Compute service account, configures compute runner IAM bindings,
  * and grants cross-project permissions (Editor and project IAM Admin) to the GitOps Cloud Build service account.
  */
-export class FirebaseServiceAccount extends pulumi.ComponentResource {
+export class FirebaseAppHostingServiceAccount extends pulumi.ComponentResource {
     /**
      * The custom Firebase App Hosting compute service account.
      */
-    public readonly appHostingServiceAccountCompute: gcp.serviceaccount.Account;
+    public readonly firebaseAppHostingServiceAccount: gcp.serviceaccount.Account;
 
     /**
      * The IAM binding granting the App Hosting runner role to the compute service account.
      */
-    public readonly appHostingIamMemberRunner: gcp.projects.IAMMember;
+    public readonly firebaseAppHostingIamMemberRunner: gcp.projects.IAMMember;
 
     /**
      * The cross-project Editor IAM binding for the GitOps Cloud Build service account.
@@ -42,42 +42,42 @@ export class FirebaseServiceAccount extends pulumi.ComponentResource {
     public readonly crossProjectIamMemberIamAdmin: gcp.projects.IAMMember;
 
     /**
-     * Creates a new instance of FirebaseServiceAccount.
+     * Creates a new instance of FirebaseAppHostingServiceAccount.
      *
      * @param name The logical name of the resource.
      * @param args The arguments to configure the resource.
      * @param opts A bag of options that controls this resource's behavior.
      */
-    constructor(name: string, args: FirebaseServiceAccountArgs, opts?: pulumi.ComponentResourceOptions) {
+    constructor(name: string, args: FirebaseAppHostingServiceAccountArgs, opts?: pulumi.ComponentResourceOptions) {
         super("custom:components:FirebaseServiceAccount", name, args, opts);
 
-        this.appHostingServiceAccountCompute = new gcp.serviceaccount.Account(`${name}-compute-sa`, {
+        this.firebaseAppHostingServiceAccount = new gcp.serviceaccount.Account(`${name}-sa`, {
             project: args.projectId,
-            accountId: "firebase-app-hosting-compute",
+            accountId: "sriyav-firebasehost-sa",
             displayName: "Firebase App Hosting compute service account",
         }, { parent: this });
 
-        this.appHostingIamMemberRunner = new gcp.projects.IAMMember(`${name}-sa-runner`, {
+        this.firebaseAppHostingIamMemberRunner = new gcp.projects.IAMMember(`${name}-iammember-runner`, {
             project: args.projectId,
             role: "roles/firebaseapphosting.computeRunner",
-            member: pulumi.interpolate`serviceAccount:${this.appHostingServiceAccountCompute.email}`,
+            member: pulumi.interpolate`serviceAccount:${this.firebaseAppHostingServiceAccount.email}`,
         }, { parent: this });
 
-        this.crossProjectIamMemberEditor = new gcp.projects.IAMMember(`${name}-cross-project-editor`, {
+        this.crossProjectIamMemberEditor = new gcp.projects.IAMMember(`${name}-cross-project-iammember-editor`, {
             project: args.projectId,
             role: "roles/editor",
             member: pulumi.interpolate`serviceAccount:${args.gitopsCloudbuildSa}`,
         }, { parent: this });
 
-        this.crossProjectIamMemberIamAdmin = new gcp.projects.IAMMember(`${name}-cross-project-iam-admin`, {
+        this.crossProjectIamMemberIamAdmin = new gcp.projects.IAMMember(`${name}-cross-project-iammember-iamadmin`, {
             project: args.projectId,
             role: "roles/resourcemanager.projectIamAdmin",
             member: pulumi.interpolate`serviceAccount:${args.gitopsCloudbuildSa}`,
         }, { parent: this });
 
         this.registerOutputs({
-            appHostingServiceAccountCompute: this.appHostingServiceAccountCompute,
-            appHostingIamMemberRunner: this.appHostingIamMemberRunner,
+            firebaseAppHostingServiceAccount: this.firebaseAppHostingServiceAccount,
+            firebaseAppHostingIamMemberRunner: this.firebaseAppHostingIamMemberRunner,
             crossProjectIamMemberEditor: this.crossProjectIamMemberEditor,
             crossProjectIamMemberIamAdmin: this.crossProjectIamMemberIamAdmin,
         });

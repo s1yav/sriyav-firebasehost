@@ -1,7 +1,7 @@
 import { ProjectsServiceEnable } from "./components/projects-service-enable";
 import * as pulumi from "@pulumi/pulumi";
 import { FirebaseWebApp } from "./components/firebase-webapp";
-import { FirebaseServiceAccount } from "./components/firebase-serviceaccount";
+import { FirebaseAppHostingServiceAccount } from "./components/firebase-apphosting-serviceaccount";
 import { FirebaseApphost } from "./components/firebase-apphost";
 
 // Initialize GCP Config and stack configurations
@@ -23,35 +23,31 @@ const projectId = gcpConfig.require("project");
 const region = gcpConfig.require("region");
 
 // 1. Enable Required GCP APIs
-const sriyavProjectsServiceEnable = new ProjectsServiceEnable(`${stackPrefix}`, {
+const sriyavProjectsServiceEnable = new ProjectsServiceEnable(`${stackPrefix}-projects-service-enable`, {
     projectId: projectId,
-}, {
-    aliases: [
-        { name: "sriyav-services" },
-    ],
 });
 
 // 2. Initialize Firebase and Web App
-const sriyavFirebaseWebApp = new FirebaseWebApp("sriyav-portfolio", {
+const sriyavFirebaseWebApp = new FirebaseWebApp(`${stackPrefix}-firebase-web-app`, {
     projectId,
     displayName: websiteServerRepoName,
     firebaseService: sriyavProjectsServiceEnable.firebaseService,
 });
 
 // 3. Configure IAM Roles and Cross-Project permissions
-const sriyavFirebaseServiceAccount = new FirebaseServiceAccount("sriyav-iam", {
+const sriyavFirebaseAppHostingServiceAccount = new FirebaseAppHostingServiceAccount(`${stackPrefix}-firebase-apphosting-serviceaccount`, {
     projectId,
     gitopsCloudbuildSa,
 });
 
 // 4. Deploy Firebase App Hosting Backend, Build, Traffic Splits, and Domain Mapping
-const sriyavFirebaseApphost = new FirebaseApphost("sriyav-portfolio", {
+const sriyavFirebaseApphost = new FirebaseApphost(`${stackPrefix}-firebase-apphost`, {
     projectId,
     region,
     appId: sriyavFirebaseWebApp.firebaseWebApp.appId,
-    computeServiceAccountEmail: sriyavFirebaseServiceAccount.appHostingServiceAccountCompute.email,
+    computeServiceAccountEmail: sriyavFirebaseAppHostingServiceAccount.firebaseAppHostingServiceAccount.email,
     appHostingService: sriyavProjectsServiceEnable.firebaseapphostingService,
-    appHostingIamMemberRunner: sriyavFirebaseServiceAccount.appHostingIamMemberRunner,
+    appHostingIamMemberRunner: sriyavFirebaseAppHostingServiceAccount.firebaseAppHostingIamMemberRunner,
     gitopsProjectId,
     dockerRegistryName,
     domainId,
