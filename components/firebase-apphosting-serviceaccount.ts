@@ -42,6 +42,11 @@ export class FirebaseAppHostingServiceAccount extends pulumi.ComponentResource {
     public readonly crossProjectIamMemberIamAdmin: gcp.projects.IAMMember;
 
     /**
+     * The IAM member binding allowing the Cloud Build service account to impersonate this service account.
+     */
+    public readonly impersonationIamMember: gcp.serviceaccount.IAMMember;
+
+    /**
      * Creates a new instance of FirebaseAppHostingServiceAccount.
      *
      * @param name The logical name of the resource.
@@ -75,11 +80,18 @@ export class FirebaseAppHostingServiceAccount extends pulumi.ComponentResource {
             member: pulumi.interpolate`serviceAccount:${args.gitopsCloudbuildSa}`,
         }, { parent: this });
 
+        this.impersonationIamMember = new gcp.serviceaccount.IAMMember(`${name}-impersonation`, {
+            serviceAccountId: this.firebaseAppHostingServiceAccount.name,
+            role: "roles/iam.serviceAccountTokenCreator",
+            member: pulumi.interpolate`serviceAccount:${args.gitopsCloudbuildSa}`,
+        }, { parent: this });
+
         this.registerOutputs({
             firebaseAppHostingServiceAccount: this.firebaseAppHostingServiceAccount,
             firebaseAppHostingIamMemberRunner: this.firebaseAppHostingIamMemberRunner,
             crossProjectIamMemberEditor: this.crossProjectIamMemberEditor,
             crossProjectIamMemberIamAdmin: this.crossProjectIamMemberIamAdmin,
+            impersonationIamMember: this.impersonationIamMember,
         });
     }
 }

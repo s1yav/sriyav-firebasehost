@@ -106,7 +106,13 @@ export class FirebaseApphost extends pulumi.ComponentResource {
      * @param opts A bag of options that controls this resource's behavior.
      */
     constructor(name: string, args: FirebaseApphostArgs, opts?: pulumi.ComponentResourceOptions) {
-        super("custom:components:FirebaseApphost", name, args, opts);
+        const stack = pulumi.getStack();
+        const componentOpts = pulumi.mergeOptions(opts, {
+            aliases: [
+                { type: "custom:components:FirebaseApphost", name: "sriyav-portfolio" }
+            ]
+        });
+        super("custom:components:FirebaseApphost", name, args, componentOpts);
 
         this.appHostingBackend = new gcp.firebase.AppHostingBackend(`${name}-appHostingBackend`, {
             project: args.projectId,
@@ -115,7 +121,13 @@ export class FirebaseApphost extends pulumi.ComponentResource {
             appId: args.appId,
             servingLocality: args.servingLocality,
             serviceAccount: args.computeServiceAccountEmail,
-        }, { parent: this, dependsOn: [args.appHostingService, args.appHostingIamMemberRunner] });
+        }, {
+            parent: this,
+            dependsOn: [args.appHostingService, args.appHostingIamMemberRunner],
+            aliases: [
+                `urn:pulumi:${stack}::sriyav-firebasehost::custom:components:FirebaseApphost$gcp:firebase/appHostingBackend:AppHostingBackend::sriyav-portfolio-appHostingBackend`
+            ]
+        });
 
         const { imageUrl, buildIdSuffix } = this.getDockerImage(
             args.region,
@@ -136,7 +148,13 @@ export class FirebaseApphost extends pulumi.ComponentResource {
                     image: imageUrl,
                 },
             },
-        }, { parent: this, dependsOn: [this.appHostingBackend] });
+        }, {
+            parent: this,
+            dependsOn: [this.appHostingBackend],
+            aliases: [
+                `urn:pulumi:${stack}::sriyav-firebasehost::custom:components:FirebaseApphost$gcp:firebase/appHostingBuild:AppHostingBuild::sriyav-portfolio-appHostingBuild`
+            ]
+        });
 
         this.appHostingTraffic = new gcp.firebase.AppHostingTraffic(`${name}-appHostingTraffic`, {
             project: args.projectId,
@@ -148,14 +166,26 @@ export class FirebaseApphost extends pulumi.ComponentResource {
                     percent: 100,
                 }],
             },
-        }, { parent: this, dependsOn: [this.appHostingBuild] });
+        }, {
+            parent: this,
+            dependsOn: [this.appHostingBuild],
+            aliases: [
+                `urn:pulumi:${stack}::sriyav-firebasehost::custom:components:FirebaseApphost$gcp:firebase/appHostingTraffic:AppHostingTraffic::sriyav-portfolio-appHostingTraffic`
+            ]
+        });
 
         this.appHostingDomain = new gcp.firebase.AppHostingDomain(`${name}-appHostingDomain`, {
             project: args.projectId,
             location: args.region,
             backend: this.appHostingBackend.backendId,
             domainId: args.domainId,
-        }, { parent: this, dependsOn: [this.appHostingBackend] });
+        }, {
+            parent: this,
+            dependsOn: [this.appHostingBackend],
+            aliases: [
+                `urn:pulumi:${stack}::sriyav-firebasehost::custom:components:FirebaseApphost$gcp:firebase/appHostingDomain:AppHostingDomain::sriyav-portfolio-appHostingDomain`
+            ]
+        });
 
         this.registerOutputs({
             appHostingBackend: this.appHostingBackend,

@@ -3,6 +3,8 @@ steps:
   # Install dependencies and run pulumi up using the official Pulumi Docker image
   - name: 'pulumi/pulumi:latest'
     entrypoint: 'sh'
+    env:
+      - 'GOOGLE_IMPERSONATE_SERVICE_ACCOUNT=sriyav-firebasehost-sa@sriyav0599-portfolio.iam.gserviceaccount.com'
     args:
       - '-c'
       - |
