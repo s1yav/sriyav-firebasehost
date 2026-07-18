@@ -1,19 +1,22 @@
 import * as pulumi from "@pulumi/pulumi";
 import * as gcp from "@pulumi/gcp";
 
-export interface PlatformIamArgs {
+export interface ServiceAccountArgs {
     projectId: pulumi.Input<string>;
     gitopsCloudbuildSa: pulumi.Input<string>;
 }
 
-export class PlatformIam extends pulumi.ComponentResource {
+export class ServiceAccount extends pulumi.ComponentResource {
     public readonly appHostingComputeSa: gcp.serviceaccount.Account;
     public readonly appHostingSaRunner: gcp.projects.IAMMember;
     public readonly crossProjectBuildEditor: gcp.projects.IAMMember;
     public readonly crossProjectBuildIamAdmin: gcp.projects.IAMMember;
 
-    constructor(name: string, args: PlatformIamArgs, opts?: pulumi.ComponentResourceOptions) {
-        super("custom:components:PlatformIam", name, args, opts);
+    constructor(name: string, args: ServiceAccountArgs, opts?: pulumi.ComponentResourceOptions) {
+        super("custom:components:ServiceAccount", name, args, {
+            ...opts,
+            aliases: [{ type: "custom:components:PlatformIam" }],
+        });
 
         this.appHostingComputeSa = new gcp.serviceaccount.Account(`${name}-compute-sa`, {
             project: args.projectId,

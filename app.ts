@@ -1,7 +1,7 @@
 import { EnableService } from "./enable-service";
 import * as pulumi from "@pulumi/pulumi";
 import { FirebaseWebApp } from "./components/firebase-webapp";
-import { PlatformIam } from "./components/iam";
+import { ServiceAccount } from "./components/service-account";
 import { AppHostingDeployment } from "./components/app-hosting";
 
 // Initialize GCP Config
@@ -25,7 +25,7 @@ const firebaseWebApp = new FirebaseWebApp("sriyav-portfolio", {
 // Gitops uses the custom service account s1yav-cloudbuild-sa
 const gitopsCloudbuildSa = "s1yav-cloudbuild-sa@sriyav0599-gitops.iam.gserviceaccount.com";
 
-const iam = new PlatformIam("sriyav-iam", {
+const serviceAccount = new ServiceAccount("sriyav-iam", {
     projectId: projectId,
     gitopsCloudbuildSa: gitopsCloudbuildSa,
 });
@@ -35,9 +35,9 @@ const appHosting = new AppHostingDeployment("sriyav-portfolio", {
     projectId: projectId,
     region: region,
     appId: firebaseWebApp.webApp.appId,
-    computeServiceAccountEmail: iam.appHostingComputeSa.email,
+    computeServiceAccountEmail: serviceAccount.appHostingComputeSa.email,
     apphostingService: services.apphostingService,
-    appHostingSaRunner: iam.appHostingSaRunner,
+    appHostingSaRunner: serviceAccount.appHostingSaRunner,
 });
 
 // Export the App Hosting URI and backend details
