@@ -2,7 +2,7 @@ import * as pulumi from "@pulumi/pulumi";
 import * as gcp from "@pulumi/gcp";
 import * as fs from "fs";
 import * as path from "path";
-import { gitopsProjectId, dockerRegistryName, domainId, preferredCommit, imageTagFile, websiteServerRepoName } from "../configuration";
+import { gitopsProjectId, dockerRegistryName, domainId, preferredCommit, imageTagFile, websiteServerRepoName, servingLocality } from "../configuration";
 
 export interface FirebaseApphostArgs {
     projectId: pulumi.Input<string>;
@@ -27,7 +27,7 @@ export class FirebaseApphost extends pulumi.ComponentResource {
             location: args.region,
             backendId: websiteServerRepoName,
             appId: args.appId,
-            servingLocality: "GLOBAL_ACCESS",
+            servingLocality: servingLocality,
             serviceAccount: args.computeServiceAccountEmail,
         }, { parent: this, dependsOn: [args.appHostingService, args.appHostingIamMemberRunner] });
 

@@ -5,7 +5,7 @@ import { FirebaseServiceAccount } from "./components/firebase-serviceaccount";
 import { FirebaseApphost } from "./components/firebase-apphost";
 
 // Initialize GCP Config
-import { gcpConfig, stackName, websiteServerRepoName } from "./configuration";
+import { gcpConfig, stackName, websiteServerRepoName, gitopsCloudbuildSa } from "./configuration";
 const projectId = gcpConfig.require("project");
 const region = gcpConfig.require("region");
 
@@ -23,8 +23,6 @@ const sriyavFirebaseWebApp = new FirebaseWebApp("sriyav-portfolio", {
 
 // 3. Configure IAM Roles and Cross-Project permissions
 // Gitops uses the custom service account s1yav-cloudbuild-sa
-const gitopsCloudbuildSa = "s1yav-cloudbuild-sa@sriyav0599-gitops.iam.gserviceaccount.com";
-
 const sriyavFirebaseServiceAccount = new FirebaseServiceAccount("sriyav-iam", {
     projectId: projectId,
     gitopsCloudbuildSa: gitopsCloudbuildSa,

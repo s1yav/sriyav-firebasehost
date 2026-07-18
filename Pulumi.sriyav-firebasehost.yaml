@@ -10,3 +10,5 @@ config:
   sriyav-firebasehost:preferredCommit: latest
   sriyav-firebasehost:imageTagFile: portfolio-image-tag.json
   sriyav-firebasehost:websiteServerRepoName: sriyav-portfolio
+  sriyav-firebasehost:servingLocality: GLOBAL_ACCESS
+  gitops:cloudbuildSa: s1yav-cloudbuild-sa@sriyav0599-gitops.iam.gserviceaccount.com
