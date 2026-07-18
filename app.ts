@@ -2,7 +2,7 @@ import { ProjectsServiceEnable } from "./components/projects-service-enable";
 import * as pulumi from "@pulumi/pulumi";
 import { FirebaseWebApp } from "./components/firebase-webapp";
 import { FirebaseServiceAccount } from "./components/firebase-serviceaccount";
-import { FirebaseAppHostingDeployment } from "./components/firebase-apphosting-deployment";
+import { FirebaseAppHostingBackend } from "./components/firebase-apphosting-backend";
 
 // Initialize GCP Config
 import { gcpConfig, stackName } from "./configuration";
@@ -31,7 +31,7 @@ const sriyavFirebaseServiceAccount = new FirebaseServiceAccount("sriyav-iam", {
 });
 
 // 4. Deploy Firebase App Hosting Backend, Build, Traffic Splits, and Domain Mapping
-const sriyavAppHostingDeployment = new FirebaseAppHostingDeployment("sriyav-portfolio", {
+const sriyavFirebaseAppHostingBackend = new FirebaseAppHostingBackend("sriyav-portfolio", {
     projectId: projectId,
     region: region,
     appId: sriyavFirebaseWebApp.firebaseWebApp.appId,
@@ -41,7 +41,7 @@ const sriyavAppHostingDeployment = new FirebaseAppHostingDeployment("sriyav-port
 });
 
 // Export the App Hosting URI and backend details
-export const backendUri = sriyavAppHostingDeployment.appHostingDomain.domainId.apply(domain => `https://${domain}`);
-export const backendName = sriyavAppHostingDeployment.appHostingBackend.backendId;
+export const backendUri = sriyavFirebaseAppHostingBackend.appHostingDomain.domainId.apply(domain => `https://${domain}`);
+export const backendName = sriyavFirebaseAppHostingBackend.appHostingBackend.backendId;
 export const appName = sriyavFirebaseWebApp.firebaseWebApp.displayName;
-export const domainStatus = sriyavAppHostingDeployment.appHostingDomain.customDomainStatuses;
+export const domainStatus = sriyavFirebaseAppHostingBackend.appHostingDomain.customDomainStatuses;
