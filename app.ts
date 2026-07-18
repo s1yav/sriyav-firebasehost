@@ -4,8 +4,20 @@ import { FirebaseWebApp } from "./components/firebase-webapp";
 import { FirebaseServiceAccount } from "./components/firebase-serviceaccount";
 import { FirebaseApphost } from "./components/firebase-apphost";
 
-// Initialize GCP Config
-import { gcpConfig, stackName, websiteServerRepoName, gitopsCloudbuildSa } from "./configuration";
+// Initialize GCP Config and stack configurations
+import {
+    gcpConfig,
+    stackName,
+    websiteServerRepoName,
+    gitopsCloudbuildSa,
+    gitopsProjectId,
+    dockerRegistryName,
+    domainId,
+    preferredCommit,
+    imageTagFile,
+    servingLocality
+} from "./configuration";
+
 const projectId = gcpConfig.require("project");
 const region = gcpConfig.require("region");
 
@@ -16,26 +28,34 @@ const sriyavProjectsServiceEnable = new ProjectsServiceEnable("sriyav-services",
 
 // 2. Initialize Firebase and Web App
 const sriyavFirebaseWebApp = new FirebaseWebApp("sriyav-portfolio", {
-    projectId: projectId,
+    projectId,
     displayName: websiteServerRepoName,
     firebaseService: sriyavProjectsServiceEnable.firebaseService,
 });
 
 // 3. Configure IAM Roles and Cross-Project permissions
-// Gitops uses the custom service account s1yav-cloudbuild-sa
 const sriyavFirebaseServiceAccount = new FirebaseServiceAccount("sriyav-iam", {
-    projectId: projectId,
-    gitopsCloudbuildSa: gitopsCloudbuildSa,
+    projectId,
+    gitopsCloudbuildSa,
 });
 
 // 4. Deploy Firebase App Hosting Backend, Build, Traffic Splits, and Domain Mapping
 const sriyavFirebaseApphost = new FirebaseApphost("sriyav-portfolio", {
-    projectId: projectId,
-    region: region,
+    projectId,
+    region,
     appId: sriyavFirebaseWebApp.firebaseWebApp.appId,
     computeServiceAccountEmail: sriyavFirebaseServiceAccount.appHostingServiceAccountCompute.email,
     appHostingService: sriyavProjectsServiceEnable.firebaseapphostingService,
     appHostingIamMemberRunner: sriyavFirebaseServiceAccount.appHostingIamMemberRunner,
+
+    // Config arguments passed explicitly
+    gitopsProjectId: gitopsProjectId,
+    dockerRegistryName,
+    domainId,
+    preferredCommit,
+    imageTagFile,
+    websiteServerRepoName,
+    servingLocality,
 });
 
 // Export the App Hosting URI and backend details

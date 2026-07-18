@@ -2,7 +2,6 @@ import * as pulumi from "@pulumi/pulumi";
 import * as gcp from "@pulumi/gcp";
 import * as fs from "fs";
 import * as path from "path";
-import { gitopsProjectId, dockerRegistryName, domainId, preferredCommit, imageTagFile, websiteServerRepoName, servingLocality } from "../configuration";
 
 export interface FirebaseApphostArgs {
     projectId: pulumi.Input<string>;
@@ -11,6 +10,15 @@ export interface FirebaseApphostArgs {
     computeServiceAccountEmail: pulumi.Input<string>;
     appHostingService: gcp.projects.Service;
     appHostingIamMemberRunner: gcp.projects.IAMMember;
+
+    // Configuration parameters passed as arguments
+    gitopsProjectId: pulumi.Input<string>;
+    dockerRegistryName: pulumi.Input<string>;
+    domainId: pulumi.Input<string>;
+    preferredCommit: string;
+    imageTagFile: string;
+    websiteServerRepoName: pulumi.Input<string>;
+    servingLocality: pulumi.Input<string>;
 }
 
 export class FirebaseApphost extends pulumi.ComponentResource {
@@ -25,13 +33,20 @@ export class FirebaseApphost extends pulumi.ComponentResource {
         this.appHostingBackend = new gcp.firebase.AppHostingBackend(`${name}-appHostingBackend`, {
             project: args.projectId,
             location: args.region,
-            backendId: websiteServerRepoName,
+            backendId: args.websiteServerRepoName,
             appId: args.appId,
-            servingLocality: servingLocality,
+            servingLocality: args.servingLocality,
             serviceAccount: args.computeServiceAccountEmail,
         }, { parent: this, dependsOn: [args.appHostingService, args.appHostingIamMemberRunner] });
 
-        const { imageUrl, buildIdSuffix } = this.getDockerImage(args.region);
+        const { imageUrl, buildIdSuffix } = this.getDockerImage(
+            args.region,
+            args.gitopsProjectId,
+            args.dockerRegistryName,
+            args.preferredCommit,
+            args.imageTagFile,
+            args.websiteServerRepoName
+        );
 
         this.appHostingBuild = new gcp.firebase.AppHostingBuild(`${name}-appHostingBuild`, {
             project: args.projectId,
@@ -61,7 +76,7 @@ export class FirebaseApphost extends pulumi.ComponentResource {
             project: args.projectId,
             location: args.region,
             backend: this.appHostingBackend.backendId,
-            domainId: domainId,
+            domainId: args.domainId,
         }, { parent: this, dependsOn: [this.appHostingBackend] });
 
         this.registerOutputs({
@@ -72,7 +87,14 @@ export class FirebaseApphost extends pulumi.ComponentResource {
         });
     }
 
-    private getDockerImage(region: pulumi.Input<string>): { imageUrl: pulumi.Output<string>; buildIdSuffix: string } {
+    private getDockerImage(
+        region: pulumi.Input<string>,
+        gitopsProjectId: pulumi.Input<string>,
+        dockerRegistryName: pulumi.Input<string>,
+        preferredCommit: string,
+        imageTagFile: string,
+        websiteServerRepoName: pulumi.Input<string>
+    ): { imageUrl: pulumi.Output<string>; buildIdSuffix: string } {
         // Load the portfolio docker image commit SHA from the config file
         let commitSha = preferredCommit;
         try {

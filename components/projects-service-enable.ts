@@ -1,15 +1,37 @@
 import * as pulumi from "@pulumi/pulumi";
 import * as gcp from "@pulumi/gcp";
-import { stackPrefix } from "../configuration";
 
+/**
+ * Arguments for enabling required Google Cloud APIs for the Firebase project.
+ */
 export interface ProjectsServiceEnableArgs {
+    /**
+     * The Google Cloud project ID.
+     */
     projectId: pulumi.Input<string>;
 }
 
+/**
+ * A ComponentResource that enables required Google Cloud APIs (Firebase and App Hosting) for the project.
+ */
 export class ProjectsServiceEnable extends pulumi.ComponentResource {
+    /**
+     * The enabled Firebase Management API service.
+     */
     public readonly firebaseService: gcp.projects.Service;
+
+    /**
+     * The enabled Firebase App Hosting API service.
+     */
     public readonly firebaseapphostingService: gcp.projects.Service;
 
+    /**
+     * Creates a new instance of ProjectsServiceEnable.
+     *
+     * @param name The logical name of the resource.
+     * @param args The arguments to configure the resource.
+     * @param opts A bag of options that controls this resource's behavior.
+     */
     constructor(name: string, args: ProjectsServiceEnableArgs, opts?: pulumi.ComponentResourceOptions) {
         super("custom:components:ProjectsServiceEnable", name, args, opts);
 
