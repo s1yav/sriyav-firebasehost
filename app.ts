@@ -1,4 +1,4 @@
-import { EnableService } from "./enable-service";
+import { ProjectsServiceEnable } from "./projects-service-enable";
 import * as pulumi from "@pulumi/pulumi";
 import { FirebaseWebApp } from "./components/firebase-webapp";
 import { FirebaseServiceAccount } from "./components/firebase-serviceaccount";
@@ -10,7 +10,7 @@ const projectId = gcpConfig.require("project");
 const region = gcpConfig.require("region");
 
 // 1. Enable Required GCP APIs
-const sriyavEnableService = new EnableService("sriyav-services", {
+const sriyavProjectsServiceEnable = new ProjectsServiceEnable("sriyav-services", {
     projectId: projectId,
 });
 
@@ -18,7 +18,7 @@ const sriyavEnableService = new EnableService("sriyav-services", {
 const sriyavFirebaseWebApp = new FirebaseWebApp("sriyav-portfolio", {
     projectId: projectId,
     displayName: "sriyav-portfolio",
-    firebaseService: sriyavEnableService.firebaseService,
+    firebaseService: sriyavProjectsServiceEnable.firebaseService,
 });
 
 // 3. Configure IAM Roles and Cross-Project permissions
@@ -36,7 +36,7 @@ const sriyavAppHostingDeployment = new AppHostingDeployment("sriyav-portfolio", 
     region: region,
     appId: sriyavFirebaseWebApp.firebaseWebApp.appId,
     computeServiceAccountEmail: sriyavFirebaseServiceAccount.appHostingServiceAccountCompute.email,
-    appHostingService: sriyavEnableService.appHostingService,
+    appHostingService: sriyavProjectsServiceEnable.appHostingService,
     appHostingIamMemberRunner: sriyavFirebaseServiceAccount.appHostingIamMemberRunner,
 });
 
