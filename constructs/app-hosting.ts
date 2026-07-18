@@ -43,15 +43,17 @@ export class AppHostingDeployment extends pulumi.ComponentResource {
         }
 
         // Docker image URL in the cross-project Artifact Registry (in sriyav0599-gitops)
-        const dockerRegistryName = "s1yav-RepositoryDocker";
+        const dockerRegistryName = "s1yav-repositorydocker";
         const gitopsProjectId = "sriyav0599-gitops";
         const imageUrl = pulumi.interpolate`${args.region}-docker.pkg.dev/${gitopsProjectId}/${dockerRegistryName}/sriyav-portfolio:${commitSha}`;
+
+        const buildIdSuffix = commitSha === "latest" ? "latest" : commitSha.substring(0, 7);
 
         this.appHostingBuild = new gcp.firebase.AppHostingBuild(`${name}-build`, {
             project: args.projectId,
             location: args.region,
             backend: this.appHostingBackend.backendId,
-            buildId: `build-${commitSha}`.slice(0, 63), // Ensure it fits the 63 char limit
+            buildId: `build-${buildIdSuffix}-v3`.slice(0, 30),
             source: {
                 container: {
                     image: imageUrl,

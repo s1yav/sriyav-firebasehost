@@ -1,16 +1,16 @@
 import * as pulumi from "@pulumi/pulumi";
 import * as gcp from "@pulumi/gcp";
 
-export interface ProjectServicesArgs {
+export interface EnableServiceArgs {
     projectId: pulumi.Input<string>;
 }
 
-export class ProjectServices extends pulumi.ComponentResource {
+export class EnableService extends pulumi.ComponentResource {
     public readonly firebaseService: gcp.projects.Service;
     public readonly apphostingService: gcp.projects.Service;
 
-    constructor(name: string, args: ProjectServicesArgs, opts?: pulumi.ComponentResourceOptions) {
-        super("custom:components:ProjectServices", name, args, opts);
+    constructor(name: string, args: EnableServiceArgs, opts?: pulumi.ComponentResourceOptions) {
+        super("custom:components:EnableService", name, args, opts);
 
         this.firebaseService = new gcp.projects.Service(`${name}-firebase`, {
             project: args.projectId,
