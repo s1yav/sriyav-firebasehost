@@ -1,18 +1,21 @@
 import * as pulumi from "@pulumi/pulumi";
 import * as gcp from "@pulumi/gcp";
 
-export interface FirebaseAppArgs {
+export interface FirebaseWebAppArgs {
     projectId: pulumi.Input<string>;
     displayName: pulumi.Input<string>;
     firebaseService: gcp.projects.Service;
 }
 
-export class FirebaseApp extends pulumi.ComponentResource {
+export class FirebaseWebApp extends pulumi.ComponentResource {
     public readonly firebaseProject: gcp.firebase.Project;
     public readonly webApp: gcp.firebase.WebApp;
 
-    constructor(name: string, args: FirebaseAppArgs, opts?: pulumi.ComponentResourceOptions) {
-        super("custom:components:FirebaseApp", name, args, opts);
+    constructor(name: string, args: FirebaseWebAppArgs, opts?: pulumi.ComponentResourceOptions) {
+        super("custom:components:FirebaseWebApp", name, args, {
+            ...opts,
+            aliases: [{ type: "custom:components:FirebaseApp" }],
+        });
 
         this.firebaseProject = new gcp.firebase.Project(`${name}-project`, {
             project: args.projectId,

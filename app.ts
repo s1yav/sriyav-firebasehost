@@ -1,6 +1,6 @@
 import { EnableService } from "./enable-service";
 import * as pulumi from "@pulumi/pulumi";
-import { FirebaseApp } from "./components/firebase-app";
+import { FirebaseWebApp } from "./components/firebase-webapp";
 import { PlatformIam } from "./components/iam";
 import { AppHostingDeployment } from "./components/app-hosting";
 
@@ -15,7 +15,7 @@ const services = new EnableService("sriyav-services", {
 });
 
 // 2. Initialize Firebase and Web App
-const firebaseApp = new FirebaseApp("sriyav-portfolio", {
+const firebaseWebApp = new FirebaseWebApp("sriyav-portfolio", {
     projectId: projectId,
     displayName: "sriyav-portfolio",
     firebaseService: services.firebaseService,
@@ -34,7 +34,7 @@ const iam = new PlatformIam("sriyav-iam", {
 const appHosting = new AppHostingDeployment("sriyav-portfolio", {
     projectId: projectId,
     region: region,
-    appId: firebaseApp.webApp.appId,
+    appId: firebaseWebApp.webApp.appId,
     computeServiceAccountEmail: iam.appHostingComputeSa.email,
     apphostingService: services.apphostingService,
     appHostingSaRunner: iam.appHostingSaRunner,
