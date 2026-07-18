@@ -43,7 +43,7 @@ export class FirebaseAppHostingDeployment extends pulumi.ComponentResource {
             pulumi.log.warn(`Failed to read portfolio-image-tag.json: ${err}. Falling back to 'latest'`);
         }
 
-        // Docker image URL in the cross-project Artifact Registry (in sriyav0599-gitops)
+        // Docker image URL in gitops docker repository
         const imageUrl = pulumi.interpolate`${args.region}-docker.pkg.dev/${gitopsProjectId}/${dockerRegistryName}/sriyav-portfolio:${commitSha}`;
 
         const buildIdSuffix = commitSha === "latest" ? "latest" : commitSha.substring(0, 7);
