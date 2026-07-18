@@ -2,6 +2,7 @@ import * as pulumi from "@pulumi/pulumi";
 import * as gcp from "@pulumi/gcp";
 import * as fs from "fs";
 import * as path from "path";
+import { gitopsProjectId, dockerRegistryName } from "../configuration";
 
 export interface FirebaseAppHostingDeploymentArgs {
     projectId: pulumi.Input<string>;
@@ -43,8 +44,6 @@ export class FirebaseAppHostingDeployment extends pulumi.ComponentResource {
         }
 
         // Docker image URL in the cross-project Artifact Registry (in sriyav0599-gitops)
-        const dockerRegistryName = "s1yav-repositorydocker";
-        const gitopsProjectId = "sriyav0599-gitops";
         const imageUrl = pulumi.interpolate`${args.region}-docker.pkg.dev/${gitopsProjectId}/${dockerRegistryName}/sriyav-portfolio:${commitSha}`;
 
         const buildIdSuffix = commitSha === "latest" ? "latest" : commitSha.substring(0, 7);

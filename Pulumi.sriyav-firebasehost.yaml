@@ -2,3 +2,7 @@ config:
   gcp:project:
     secure: AAABAO/M7TszDSNlqdoUDt+4Pgyip6SIvfA+peYNgVfFRDG42djYO6N8+chSjkAtdP5W9A==
   gcp:region: us-central1
+  gitops:projectId:
+    secure: AAABANG5Nbtcsv+j4Xk5ZHIs3c6ycwxRLRMdcSOkiC6voFK9p71h39jf65WD755ofQ==
+  gitops:dockerRegistryName:
+    secure: AAABAHKhmnGoZSti6OpCk5Xfjpo2pM5JU8XZ4hV5mbFgFxIDf/6kzkVmIDzRO+nLplep0Xca
