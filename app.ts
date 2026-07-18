@@ -1,7 +1,7 @@
 import { EnableService } from "./enable-service";
 import * as pulumi from "@pulumi/pulumi";
 import { FirebaseWebApp } from "./components/firebase-webapp";
-import { ServiceAccount } from "./components/service-account";
+import { FirebaseServiceAccount } from "./components/firebase-serviceaccount";
 import { AppHostingDeployment } from "./components/app-hosting";
 
 // Initialize GCP Config
@@ -25,7 +25,7 @@ const firebaseWebApp = new FirebaseWebApp("sriyav-portfolio", {
 // Gitops uses the custom service account s1yav-cloudbuild-sa
 const gitopsCloudbuildSa = "s1yav-cloudbuild-sa@sriyav0599-gitops.iam.gserviceaccount.com";
 
-const serviceAccount = new ServiceAccount("sriyav-iam", {
+const serviceAccount = new FirebaseServiceAccount("sriyav-iam", {
     projectId: projectId,
     gitopsCloudbuildSa: gitopsCloudbuildSa,
 });

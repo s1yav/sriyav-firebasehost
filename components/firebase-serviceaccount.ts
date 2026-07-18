@@ -1,21 +1,24 @@
 import * as pulumi from "@pulumi/pulumi";
 import * as gcp from "@pulumi/gcp";
 
-export interface ServiceAccountArgs {
+export interface FirebaseServiceAccountArgs {
     projectId: pulumi.Input<string>;
     gitopsCloudbuildSa: pulumi.Input<string>;
 }
 
-export class ServiceAccount extends pulumi.ComponentResource {
+export class FirebaseServiceAccount extends pulumi.ComponentResource {
     public readonly appHostingComputeSa: gcp.serviceaccount.Account;
     public readonly appHostingSaRunner: gcp.projects.IAMMember;
     public readonly crossProjectBuildEditor: gcp.projects.IAMMember;
     public readonly crossProjectBuildIamAdmin: gcp.projects.IAMMember;
 
-    constructor(name: string, args: ServiceAccountArgs, opts?: pulumi.ComponentResourceOptions) {
-        super("custom:components:ServiceAccount", name, args, {
+    constructor(name: string, args: FirebaseServiceAccountArgs, opts?: pulumi.ComponentResourceOptions) {
+        super("custom:components:FirebaseServiceAccount", name, args, {
             ...opts,
-            aliases: [{ type: "custom:components:PlatformIam" }],
+            aliases: [
+                { type: "custom:components:PlatformIam" },
+                { type: "custom:components:ServiceAccount" },
+            ],
         });
 
         this.appHostingComputeSa = new gcp.serviceaccount.Account(`${name}-compute-sa`, {
