@@ -4,7 +4,7 @@ import * as fs from "fs";
 import * as path from "path";
 import { gitopsProjectId, dockerRegistryName } from "../configuration";
 
-export interface FirebaseAppHostingBackendArgs {
+export interface FirebaseApphostArgs {
     projectId: pulumi.Input<string>;
     region: pulumi.Input<string>;
     appId: pulumi.Input<string>;
@@ -13,17 +13,17 @@ export interface FirebaseAppHostingBackendArgs {
     appHostingIamMemberRunner: gcp.projects.IAMMember;
 }
 
-export class FirebaseAppHostingBackend extends pulumi.ComponentResource {
+export class FirebaseApphost extends pulumi.ComponentResource {
     public readonly appHostingBackend: gcp.firebase.AppHostingBackend;
     public readonly appHostingBuild: gcp.firebase.AppHostingBuild;
     public readonly appHostingTraffic: gcp.firebase.AppHostingTraffic;
     public readonly appHostingDomain: gcp.firebase.AppHostingDomain;
 
-    constructor(name: string, args: FirebaseAppHostingBackendArgs, opts?: pulumi.ComponentResourceOptions) {
-        super("custom:components:FirebaseAppHostingBackend", name, args, {
+    constructor(name: string, args: FirebaseApphostArgs, opts?: pulumi.ComponentResourceOptions) {
+        super("custom:components:FirebaseApphost", name, args, {
             ...opts,
             aliases: [
-                { type: "custom:components:FirebaseAppHostingDeployment" },
+                { type: "custom:components:FirebaseAppHostingBackend" },
             ],
         });
 
@@ -41,7 +41,7 @@ export class FirebaseAppHostingBackend extends pulumi.ComponentResource {
             parent: this, 
             dependsOn: [args.appHostingService, args.appHostingIamMemberRunner],
             aliases: [
-                `urn:pulumi:${stack}::${project}::custom:components:FirebaseAppHostingDeployment$gcp:firebase/appHostingBackend:AppHostingBackend::${name}-backend`,
+                `urn:pulumi:${stack}::${project}::custom:components:FirebaseAppHostingBackend$gcp:firebase/appHostingBackend:AppHostingBackend::${name}-backend`,
             ],
         });
 
@@ -76,7 +76,7 @@ export class FirebaseAppHostingBackend extends pulumi.ComponentResource {
             parent: this, 
             dependsOn: [this.appHostingBackend],
             aliases: [
-                `urn:pulumi:${stack}::${project}::custom:components:FirebaseAppHostingDeployment$gcp:firebase/appHostingBuild:AppHostingBuild::${name}-build`,
+                `urn:pulumi:${stack}::${project}::custom:components:FirebaseAppHostingBackend$gcp:firebase/appHostingBuild:AppHostingBuild::${name}-build`,
             ],
         });
 
@@ -94,7 +94,7 @@ export class FirebaseAppHostingBackend extends pulumi.ComponentResource {
             parent: this, 
             dependsOn: [this.appHostingBuild],
             aliases: [
-                `urn:pulumi:${stack}::${project}::custom:components:FirebaseAppHostingDeployment$gcp:firebase/appHostingTraffic:AppHostingTraffic::${name}-traffic`,
+                `urn:pulumi:${stack}::${project}::custom:components:FirebaseAppHostingBackend$gcp:firebase/appHostingTraffic:AppHostingTraffic::${name}-traffic`,
             ],
         });
 
@@ -107,7 +107,7 @@ export class FirebaseAppHostingBackend extends pulumi.ComponentResource {
             parent: this, 
             dependsOn: [this.appHostingBackend],
             aliases: [
-                `urn:pulumi:${stack}::${project}::custom:components:FirebaseAppHostingDeployment$gcp:firebase/appHostingDomain:AppHostingDomain::${name}-domain`,
+                `urn:pulumi:${stack}::${project}::custom:components:FirebaseAppHostingBackend$gcp:firebase/appHostingDomain:AppHostingDomain::${name}-domain`,
             ],
         });
 
