@@ -11,4 +11,5 @@ config:
   sriyav-firebasehost:imageTagFile: portfolio-image-tag.json
   sriyav-firebasehost:websiteServerRepoName: sriyav-portfolio
   sriyav-firebasehost:servingLocality: GLOBAL_ACCESS
-  gitops:cloudbuildSa: s1yav-cloudbuild-sa@sriyav0599-gitops.iam.gserviceaccount.com
+  gitops:cloudbuildSa:
+    secure: AAABAOU1dkSW5ZtZ0jZLVGstW5lNOt5dcUuccuY7tVrxDZwL7MkHB9VBwubVh37/gs/9g5ZvzT3IwJi9GohkG6GQ7kzPRgwEY8KpZA4k5rMvan+BEUbSCiPslmco

@@ -7,7 +7,7 @@ export const stackPrefix = "sriyav-firebase";
 export const gitopsConfig = new pulumi.Config("gitops");
 export const gitopsProjectId = gitopsConfig.requireSecret("projectId");
 export const dockerRegistryName = gitopsConfig.requireSecret("dockerRegistryName");
-export const gitopsCloudbuildSa = gitopsConfig.require("cloudbuildSa");
+export const gitopsCloudbuildSa = gitopsConfig.requireSecret("cloudbuildSa");
 
 export const appConfig = new pulumi.Config();
 export const domainId = appConfig.require("domainId");
