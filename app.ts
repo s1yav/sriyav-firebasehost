@@ -1,4 +1,4 @@
-import { services } from "./enable-services-run";
+import { EnableService } from "./enable-service";
 import * as pulumi from "@pulumi/pulumi";
 import { FirebaseApp } from "./components/firebase-app";
 import { PlatformIam } from "./components/iam";
@@ -8,6 +8,11 @@ import { AppHostingDeployment } from "./components/app-hosting";
 import { gcpConfig, stackName } from "./configuration";
 const projectId = gcpConfig.require("project");
 const region = gcpConfig.require("region");
+
+// 1. Enable Required GCP APIs
+const services = new EnableService("sriyav-services", {
+    projectId: projectId,
+});
 
 // 2. Initialize Firebase and Web App
 const firebaseApp = new FirebaseApp("sriyav-portfolio", {
