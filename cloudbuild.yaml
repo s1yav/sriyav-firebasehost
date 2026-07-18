@@ -1,0 +1,26 @@
+# Cloud Build configuration to run Pulumi deployments for Firebase App Hosting on sriyav-firebasehost repo commits
+steps:
+  # Install dependencies and run pulumi up using the official Pulumi Docker image
+  - name: 'pulumi/pulumi:latest'
+    entrypoint: 'sh'
+    args:
+      - '-c'
+      - |
+        npm ci
+        pulumi up --yes --stack dev --non-interactive
+    secretEnv:
+      - 'PULUMI_ACCESS_TOKEN'
+
+# Retrieve the Pulumi Access Token from GCP Secret Manager (runs in sriyav0599-gitops project)
+availableSecrets:
+  secretManager:
+    - versionName: 'projects/$PROJECT_ID/secrets/$_PULUMI_ACCESS_TOKEN_ID/versions/latest'
+      env: 'PULUMI_ACCESS_TOKEN'
+
+substitutions:
+  # Default Secret Manager name for the Pulumi Access Token
+  _PULUMI_ACCESS_TOKEN_ID: 'pulumi-access-token'
+
+options:
+  # Log directly to Cloud Logging
+  logging: CLOUD_LOGGING_ONLY
