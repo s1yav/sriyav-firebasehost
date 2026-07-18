@@ -3,7 +3,7 @@ import * as gcp from "@pulumi/gcp";
 import * as fs from "fs";
 import * as path from "path";
 
-export interface AppHostingDeploymentArgs {
+export interface FirebaseAppHostingDeploymentArgs {
     projectId: pulumi.Input<string>;
     region: pulumi.Input<string>;
     appId: pulumi.Input<string>;
@@ -12,13 +12,13 @@ export interface AppHostingDeploymentArgs {
     appHostingIamMemberRunner: gcp.projects.IAMMember;
 }
 
-export class AppHostingDeployment extends pulumi.ComponentResource {
+export class FirebaseAppHostingDeployment extends pulumi.ComponentResource {
     public readonly appHostingBackend: gcp.firebase.AppHostingBackend;
     public readonly appHostingBuild: gcp.firebase.AppHostingBuild;
     public readonly appHostingTraffic: gcp.firebase.AppHostingTraffic;
     public readonly appHostingDomain: gcp.firebase.AppHostingDomain;
 
-    constructor(name: string, args: AppHostingDeploymentArgs, opts?: pulumi.ComponentResourceOptions) {
+    constructor(name: string, args: FirebaseAppHostingDeploymentArgs, opts?: pulumi.ComponentResourceOptions) {
         super("custom:components:AppHostingDeployment", name, args, opts);
 
         this.appHostingBackend = new gcp.firebase.AppHostingBackend(`${name}-backend`, {
