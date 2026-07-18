@@ -22,15 +22,84 @@ export class FirebaseApphost extends pulumi.ComponentResource {
     constructor(name: string, args: FirebaseApphostArgs, opts?: pulumi.ComponentResourceOptions) {
         super("custom:components:FirebaseApphost", name, args, opts);
 
-        this.appHostingBackend = new gcp.firebase.AppHostingBackend(`${name}-backend`, {
+        const stack = pulumi.getStack();
+        const project = pulumi.getProject();
+
+        this.appHostingBackend = new gcp.firebase.AppHostingBackend(`${name}-appHostingBackend`, {
             project: args.projectId,
             location: args.region,
             backendId: "sriyav-portfolio",
             appId: args.appId,
             servingLocality: "GLOBAL_ACCESS",
             serviceAccount: args.computeServiceAccountEmail,
-        }, { parent: this, dependsOn: [args.appHostingService, args.appHostingIamMemberRunner] });
+        }, { 
+            parent: this, 
+            dependsOn: [args.appHostingService, args.appHostingIamMemberRunner],
+            aliases: [
+                `urn:pulumi:${stack}::${project}::custom:components:FirebaseApphost$gcp:firebase/appHostingBackend:AppHostingBackend::${name}-backend`,
+            ],
+        });
 
+        const { imageUrl, buildIdSuffix } = this.getDockerImage(args.region);
+
+        this.appHostingBuild = new gcp.firebase.AppHostingBuild(`${name}-appHostingBuild`, {
+            project: args.projectId,
+            location: args.region,
+            backend: this.appHostingBackend.backendId,
+            buildId: `build-${buildIdSuffix}-v3`.slice(0, 30),
+            source: {
+                container: {
+                    image: imageUrl,
+                },
+            },
+        }, { 
+            parent: this, 
+            dependsOn: [this.appHostingBackend],
+            aliases: [
+                `urn:pulumi:${stack}::${project}::custom:components:FirebaseApphost$gcp:firebase/appHostingBuild:AppHostingBuild::${name}-build`,
+            ],
+        });
+
+        this.appHostingTraffic = new gcp.firebase.AppHostingTraffic(`${name}-appHostingTraffic`, {
+            project: args.projectId,
+            location: args.region,
+            backend: this.appHostingBackend.backendId,
+            target: {
+                splits: [{
+                    build: this.appHostingBuild.name,
+                    percent: 100,
+                }],
+            },
+        }, { 
+            parent: this, 
+            dependsOn: [this.appHostingBuild],
+            aliases: [
+                `urn:pulumi:${stack}::${project}::custom:components:FirebaseApphost$gcp:firebase/appHostingTraffic:AppHostingTraffic::${name}-traffic`,
+            ],
+        });
+
+        this.appHostingDomain = new gcp.firebase.AppHostingDomain(`${name}-appHostingDomain`, {
+            project: args.projectId,
+            location: args.region,
+            backend: this.appHostingBackend.backendId,
+            domainId: "sriyav.com",
+        }, { 
+            parent: this, 
+            dependsOn: [this.appHostingBackend],
+            aliases: [
+                `urn:pulumi:${stack}::${project}::custom:components:FirebaseApphost$gcp:firebase/appHostingDomain:AppHostingDomain::${name}-domain`,
+            ],
+        });
+
+        this.registerOutputs({
+            appHostingBackend: this.appHostingBackend,
+            appHostingBuild: this.appHostingBuild,
+            appHostingTraffic: this.appHostingTraffic,
+            appHostingDomain: this.appHostingDomain,
+        });
+    }
+
+    private getDockerImage(region: pulumi.Input<string>): { imageUrl: pulumi.Output<string>; buildIdSuffix: string } {
         // Load the portfolio docker image commit SHA from the config file
         let commitSha = "latest";
         try {
@@ -44,46 +113,9 @@ export class FirebaseApphost extends pulumi.ComponentResource {
         }
 
         // Docker image URL in gitops docker repository
-        const imageUrl = pulumi.interpolate`${args.region}-docker.pkg.dev/${gitopsProjectId}/${dockerRegistryName}/sriyav-portfolio:${commitSha}`;
-
+        const imageUrl = pulumi.interpolate`${region}-docker.pkg.dev/${gitopsProjectId}/${dockerRegistryName}/sriyav-portfolio:${commitSha}`;
         const buildIdSuffix = commitSha === "latest" ? "latest" : commitSha.substring(0, 7);
 
-        this.appHostingBuild = new gcp.firebase.AppHostingBuild(`${name}-build`, {
-            project: args.projectId,
-            location: args.region,
-            backend: this.appHostingBackend.backendId,
-            buildId: `build-${buildIdSuffix}-v3`.slice(0, 30),
-            source: {
-                container: {
-                    image: imageUrl,
-                },
-            },
-        }, { parent: this, dependsOn: [this.appHostingBackend] });
-
-        this.appHostingTraffic = new gcp.firebase.AppHostingTraffic(`${name}-traffic`, {
-            project: args.projectId,
-            location: args.region,
-            backend: this.appHostingBackend.backendId,
-            target: {
-                splits: [{
-                    build: this.appHostingBuild.name,
-                    percent: 100,
-                }],
-            },
-        }, { parent: this, dependsOn: [this.appHostingBuild] });
-
-        this.appHostingDomain = new gcp.firebase.AppHostingDomain(`${name}-domain`, {
-            project: args.projectId,
-            location: args.region,
-            backend: this.appHostingBackend.backendId,
-            domainId: "sriyav.com",
-        }, { parent: this, dependsOn: [this.appHostingBackend] });
-
-        this.registerOutputs({
-            appHostingBackend: this.appHostingBackend,
-            appHostingBuild: this.appHostingBuild,
-            appHostingTraffic: this.appHostingTraffic,
-            appHostingDomain: this.appHostingDomain,
-        });
+        return { imageUrl, buildIdSuffix };
     }
 }
