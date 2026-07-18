@@ -18,7 +18,7 @@ const sriyavProjectsServiceEnable = new ProjectsServiceEnable("sriyav-services",
 const sriyavFirebaseWebApp = new FirebaseWebApp("sriyav-portfolio", {
     projectId: projectId,
     displayName: "sriyav-portfolio",
-    firebaseService: sriyavProjectsServiceEnable.firebaseService,
+    firebaseService: sriyavProjectsServiceEnable.firebaseEnable,
 });
 
 // 3. Configure IAM Roles and Cross-Project permissions
@@ -36,7 +36,7 @@ const sriyavAppHostingDeployment = new AppHostingDeployment("sriyav-portfolio", 
     region: region,
     appId: sriyavFirebaseWebApp.firebaseWebApp.appId,
     computeServiceAccountEmail: sriyavFirebaseServiceAccount.appHostingServiceAccountCompute.email,
-    appHostingService: sriyavProjectsServiceEnable.appHostingService,
+    appHostingService: sriyavProjectsServiceEnable.firebaseapphostingEnable,
     appHostingIamMemberRunner: sriyavFirebaseServiceAccount.appHostingIamMemberRunner,
 });
 
