@@ -124,9 +124,6 @@ export class FirebaseApphost extends pulumi.ComponentResource {
         }, {
             parent: this,
             dependsOn: [args.appHostingService, args.appHostingServiceAccountIamMember],
-            aliases: [
-                `urn:pulumi:${stack}::sriyav-firebasehost::custom:components:FirebaseApphost$gcp:firebase/appHostingBackend:AppHostingBackend::sriyav-portfolio-appHostingBackend`
-            ]
         });
 
         const { imageUrl, buildIdSuffix } = this.getDockerImage(
