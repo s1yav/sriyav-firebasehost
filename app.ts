@@ -15,15 +15,20 @@ import {
     domainId,
     preferredCommit,
     imageTagFile,
-    servingLocality
+    servingLocality,
+    stackPrefix
 } from "./configuration";
 
 const projectId = gcpConfig.require("project");
 const region = gcpConfig.require("region");
 
 // 1. Enable Required GCP APIs
-const sriyavProjectsServiceEnable = new ProjectsServiceEnable("sriyav-services", {
+const sriyavProjectsServiceEnable = new ProjectsServiceEnable(`${stackPrefix}`, {
     projectId: projectId,
+}, {
+    aliases: [
+        { name: "sriyav-services" },
+    ],
 });
 
 // 2. Initialize Firebase and Web App
