@@ -12,7 +12,7 @@ This document outlines the definitions and roles of each Google Cloud Platform (
 
 ### **`gcp.firebase.WebApp`**
 * **Definition**: A resource representing a registered web application client within a Firebase Project. It registers the app profile and creates the unique `appId`.
-* **Role in this stack**: Establishes the identity wrapper for your front-end code (such as your React app in `sriyav-portfolio`) and links it to the Firebase infrastructure.
+* **Role in this stack**: Establishes the identity wrapper for your front-end code (such as your React app) and links it to the Firebase infrastructure.
 
 ---
 
@@ -20,15 +20,15 @@ This document outlines the definitions and roles of each Google Cloud Platform (
 
 ### **`gcp.serviceaccount.Account`**
 * **Definition**: Represents a GCP Service Account—a special type of identity used by applications or VMs (not users) to make authorized API calls.
-* **Role in this stack**: Creates a dedicated compute identity (`sriyav-firebasehost-sa`) that the App Hosting backend will run under, isolating its execution privileges.
+* **Role in this stack**: Creates a dedicated compute identity that the App Hosting backend will run under, isolating its execution privileges.
 
 ### **`gcp.projects.IAMMember`** (Project-level IAM Binding)
 * **Definition**: Grants a specific role (permissions) to a member (e.g., a user, group, or service account) at the project level.
-* **Role in this stack**: Grants the `roles/owner` role to the newly created compute service account (`sriyav-firebasehost-sa`), allowing it full access to read and orchestrate project resources during runtime.
+* **Role in this stack**: Grants the `roles/owner` role to the newly created compute service account, allowing it full access to read and orchestrate project resources during runtime.
 
 ### **`gcp.serviceaccount.IAMMember`** (Service Account-level IAM Binding)
 * **Definition**: Grants permissions *directly on* an individual service account resource itself (rather than project-wide).
-* **Role in this stack**: Grants the `roles/iam.serviceAccountTokenCreator` role to the cross-project GitOps Cloud Build service account. This allows Cloud Build to impersonate the App Hosting runner service account (`sriyav-firebasehost-sa`) and generate tokens to deploy code on its behalf.
+* **Role in this stack**: Grants the `roles/iam.serviceAccountTokenCreator` role to the cross-project GitOps Cloud Build service account. This allows Cloud Build to impersonate the App Hosting runner service account and generate tokens to deploy code on its behalf.
 
 ---
 
