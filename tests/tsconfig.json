@@ -1,0 +1,13 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "module": "commonjs",
+    "moduleResolution": "node"
+  },
+  "include": [
+    "**/*.ts",
+    "../components/**/*.ts",
+    "../app.ts",
+    "../configuration.ts"
+  ]
+}
