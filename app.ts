@@ -57,7 +57,7 @@ const sriyavFirebaseApphost = new FirebaseApphost(`${stackPrefix}-firebase-appho
 
 // Export the App Hosting URI and backend details
 export const apex = sriyavFirebaseApphost.appHostingDomain.domainId.apply((domain: string) => `https://${domain}`);
-export const subdomain = sriyavFirebaseApphost.appHostingDomain.domainId.apply((domain: string) => `https://www.${domain}`);
+export const subdomain = sriyavFirebaseApphost.appHostingSubDomain.domainId.apply((domain: string) => `https://${domain}`);
 export const backendName = sriyavFirebaseApphost.appHostingBackend.backendId;
 export const appName = sriyavFirebaseWebApp.firebaseWebApp.displayName;
 export const domainStatus = sriyavFirebaseApphost.appHostingDomain.customDomainStatuses;

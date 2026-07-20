@@ -99,6 +99,11 @@ export class FirebaseApphost extends pulumi.ComponentResource {
     public readonly appHostingDomain: gcp.firebase.AppHostingDomain;
 
     /**
+     * The Custom Subdomain mapping for the App Hosting backend (e.g. www.<name>.com).
+     */
+    public readonly appHostingSubDomain: gcp.firebase.AppHostingDomain;
+
+    /**
      * Creates a new instance of FirebaseApphost.
      *
      * @param name The logical name of the resource.
@@ -170,11 +175,22 @@ export class FirebaseApphost extends pulumi.ComponentResource {
             dependsOn: [this.appHostingBackend],
         });
 
+        this.appHostingSubDomain = new gcp.firebase.AppHostingDomain(`${name}-appHostingSubDomain`, {
+            project: args.projectId,
+            location: args.region,
+            backend: this.appHostingBackend.backendId,
+            domainId: pulumi.interpolate`www.${args.domainId}`,
+        }, {
+            parent: this,
+            dependsOn: [this.appHostingBackend],
+        });
+
         this.registerOutputs({
             appHostingBackend: this.appHostingBackend,
             appHostingBuild: this.appHostingBuild,
             appHostingTraffic: this.appHostingTraffic,
             appHostingDomain: this.appHostingDomain,
+            appHostingSubDomain: this.appHostingSubDomain,
         });
     }
 
