@@ -25,7 +25,7 @@ export interface FirebaseApphostArgs {
     /**
      * The email of the compute service account used by App Hosting.
      */
-    computeServiceAccountEmail: pulumi.Input<string>;
+    appHostingServiceAccountEmail: pulumi.Input<string>;
 
     /**
      * The enabled projects service resource dependency.
@@ -115,7 +115,7 @@ export class FirebaseApphost extends pulumi.ComponentResource {
             backendId: args.websiteServerRepoName,
             appId: args.appId,
             servingLocality: args.servingLocality,
-            serviceAccount: args.computeServiceAccountEmail,
+            serviceAccount: args.appHostingServiceAccountEmail,
         }, {
             parent: this,
             dependsOn: [args.appHostingService, args.appHostingServiceAccountIamMember],
@@ -143,9 +143,6 @@ export class FirebaseApphost extends pulumi.ComponentResource {
         }, {
             parent: this,
             dependsOn: [this.appHostingBackend],
-            aliases: [
-                `urn:pulumi:${stack}::sriyav-firebasehost::custom:components:FirebaseApphost$gcp:firebase/appHostingBuild:AppHostingBuild::sriyav-portfolio-appHostingBuild`
-            ]
         });
 
         this.appHostingTraffic = new gcp.firebase.AppHostingTraffic(`${name}-appHostingTraffic`, {
@@ -161,9 +158,6 @@ export class FirebaseApphost extends pulumi.ComponentResource {
         }, {
             parent: this,
             dependsOn: [this.appHostingBuild],
-            aliases: [
-                `urn:pulumi:${stack}::sriyav-firebasehost::custom:components:FirebaseApphost$gcp:firebase/appHostingTraffic:AppHostingTraffic::sriyav-portfolio-appHostingTraffic`
-            ]
         });
 
         this.appHostingDomain = new gcp.firebase.AppHostingDomain(`${name}-appHostingDomain`, {
@@ -174,9 +168,6 @@ export class FirebaseApphost extends pulumi.ComponentResource {
         }, {
             parent: this,
             dependsOn: [this.appHostingBackend],
-            aliases: [
-                `urn:pulumi:${stack}::sriyav-firebasehost::custom:components:FirebaseApphost$gcp:firebase/appHostingDomain:AppHostingDomain::sriyav-portfolio-appHostingDomain`
-            ]
         });
 
         this.registerOutputs({
