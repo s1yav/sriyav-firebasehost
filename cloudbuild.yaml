@@ -4,7 +4,7 @@ steps:
   - name: 'pulumi/pulumi:latest'
     entrypoint: 'sh'
     env:
-      - 'GOOGLE_IMPERSONATE_SERVICE_ACCOUNT=sriyav-firebasehost-sa@sriyav0599-portfolio.iam.gserviceaccount.com'
+      - 'GOOGLE_IMPERSONATE_SERVICE_ACCOUNT=$_FIREBASEHOST_SERVICE_ACCOUNT'
     args:
       - '-c'
       - |
