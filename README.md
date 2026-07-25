@@ -79,3 +79,5 @@ If you run into issues or have questions, check out:
 - Pulumi Documentation: https://www.pulumi.com/docs/
 - Community Slack: https://slack.pulumi.com/
 - GitHub Issues: https://github.com/pulumi/pulumi/issues
+
+<!-- Hosting template status verified: July 25, 2026 -->
