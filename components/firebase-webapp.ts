@@ -35,6 +35,9 @@ export class FirebaseWebApp extends pulumi.ComponentResource {
      */
     public readonly firebaseWebApp: gcp.firebase.WebApp;
 
+    private readonly name: string;
+    private readonly args: FirebaseWebAppArgs;
+
     /**
      * Creates a new instance of FirebaseWebApp.
      *
@@ -45,18 +48,34 @@ export class FirebaseWebApp extends pulumi.ComponentResource {
     constructor(name: string, args: FirebaseWebAppArgs, opts?: pulumi.ComponentResourceOptions) {
         super("custom:components:FirebaseWebApp", name, args, opts);
 
-        this.firebaseProject = new gcp.firebase.Project(`${name}-firebase-project`, {
-            project: args.projectId,
-        }, { parent: this, dependsOn: [args.firebaseService] });
+        this.name = name;
+        this.args = args;
 
-        this.firebaseWebApp = new gcp.firebase.WebApp(`${name}-firebase-webapp`, {
-            project: args.projectId,
-            displayName: args.displayName,
-        }, { parent: this, dependsOn: [this.firebaseProject] });
+        this.firebaseProject = this.createFirebaseProject();
+        this.firebaseWebApp = this.createFirebaseWebApp();
 
         this.registerOutputs({
             firebaseProject: this.firebaseProject,
             firebaseWebApp: this.firebaseWebApp,
         });
+    }
+
+    /**
+     * Creates the Firebase Project resource.
+     */
+    private createFirebaseProject(): gcp.firebase.Project {
+        return new gcp.firebase.Project(`${this.name}-firebase-project`, {
+            project: this.args.projectId,
+        }, { parent: this, dependsOn: [this.args.firebaseService] });
+    }
+
+    /**
+     * Creates the Firebase Web App resource.
+     */
+    private createFirebaseWebApp(): gcp.firebase.WebApp {
+        return new gcp.firebase.WebApp(`${this.name}-firebase-webapp`, {
+            project: this.args.projectId,
+            displayName: this.args.displayName,
+        }, { parent: this, dependsOn: [this.firebaseProject] });
     }
 }
