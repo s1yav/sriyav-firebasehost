@@ -14,11 +14,6 @@ export interface FirebaseWebAppArgs {
      * The display name of the Firebase Web App.
      */
     displayName: pulumi.Input<string>;
-
-    /**
-     * The enabled projects service resource that this Web App depends on.
-     */
-    firebaseService: gcp.projects.Service;
 }
 
 /**
@@ -52,7 +47,7 @@ export class FirebaseWebApp extends pulumi.ComponentResource {
         this.args = args;
 
         this.firebaseProject = this.createFirebaseProject();
-        this.firebaseWebApp = this.createFirebaseWebApp();
+        this.firebaseWebApp = this.createAndRegisterFirebaseWebApp();
 
         this.registerOutputs({
             firebaseProject: this.firebaseProject,
@@ -66,16 +61,16 @@ export class FirebaseWebApp extends pulumi.ComponentResource {
     private createFirebaseProject(): gcp.firebase.Project {
         return new gcp.firebase.Project(`${this.name}-firebase-project`, {
             project: this.args.projectId,
-        }, { parent: this, dependsOn: [this.args.firebaseService] });
+        }, { parent: this });
     }
 
     /**
-     * Creates the Firebase Web App resource.
+     * Creates and registers the Firebase Web App resource.
      */
-    private createFirebaseWebApp(): gcp.firebase.WebApp {
+    private createAndRegisterFirebaseWebApp(): gcp.firebase.WebApp {
         return new gcp.firebase.WebApp(`${this.name}-firebase-webapp`, {
             project: this.args.projectId,
             displayName: this.args.displayName,
-        }, { parent: this, dependsOn: [this.firebaseProject] });
+        }, { parent: this });
     }
 }
