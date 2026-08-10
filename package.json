@@ -2,7 +2,7 @@
     "name": "sriyav-firebasehost",
     "main": "app.ts",
     "scripts": {
-        "test": "TS_NODE_PROJECT=tests/tsconfig.json mocha -r ts-node/register 'tests/**/*.spec.ts'"
+        "test": "TS_NODE_PROJECT=tests/tsconfig.json mocha -r ts-node/register/transpile-only 'tests/**/*.spec.ts'"
     },
     "devDependencies": {
         "@types/chai": "^5.2.3",

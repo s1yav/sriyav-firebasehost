@@ -1,10 +1,9 @@
 import * as pulumi from "@pulumi/pulumi";
 
 export const gcpConfig = new pulumi.Config("gcp");
-export const portfolioProjectId = gcpConfig.require("project");
+export const projectId = gcpConfig.require("project");
 export const region = gcpConfig.require("region");
 export const stackName = pulumi.getStack();
-export const stackPrefix = "sriyav-firebase";
 
 export const gitopsConfig = new pulumi.Config("gitops");
 export const gitopsProjectId = gitopsConfig.requireSecret("projectId");
@@ -15,5 +14,5 @@ export const appConfig = new pulumi.Config();
 export const domainId = appConfig.require("domainId");
 export const preferredCommit = appConfig.require("preferredCommit");
 export const imageTagFile = appConfig.require("imageTagFile");
-export const websiteServerRepoName = appConfig.require("websiteServerRepoName");
+export const frontendRepoName = appConfig.require("frontendRepoName");
 export const servingLocality = appConfig.require("servingLocality");

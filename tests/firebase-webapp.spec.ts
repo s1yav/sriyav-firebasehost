@@ -1,27 +1,17 @@
 import { expect } from "chai";
-import * as gcp from "@pulumi/gcp";
 import { setupMocks, promiseOf } from "./setup";
-import { FirebaseWebApp } from "../components/firebase-webapp";
+import { WebAppComponent } from "../components/webapp-component";
 
-describe("FirebaseWebApp component", () => {
+describe("WebAppComponent", () => {
     before(() => {
         setupMocks();
     });
 
-    it("should register a Firebase project and Web App", async () => {
-        const dummyService = new gcp.projects.Service("dummy-service", {
-            project: "test-project-id",
-            service: "firebase.googleapis.com",
-        });
-
-        const component = new FirebaseWebApp("test-webapp", {
+    it("should register a Firebase Web App", async () => {
+        const component = new WebAppComponent("test-webapp", {
             projectId: "test-project-id",
             displayName: "my-test-web-app",
-            firebaseService: dummyService,
         });
-
-        const projectProj = await promiseOf(component.firebaseProject.project);
-        expect(projectProj).to.equal("test-project-id");
 
         const webAppProj = await promiseOf(component.firebaseWebApp.project);
         const webAppDisplayName = await promiseOf(component.firebaseWebApp.displayName);

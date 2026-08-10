@@ -1,7 +1,7 @@
 import { expect } from "chai";
 import * as gcp from "@pulumi/gcp";
 import { setupMocks, promiseOf } from "./setup";
-import { FirebaseApphost } from "../components/firebase-apphost";
+import { ApphostComponent } from "../components/apphost-component";
 
 describe("FirebaseApphost component", () => {
     before(() => {
@@ -20,20 +20,28 @@ describe("FirebaseApphost component", () => {
             member: "serviceAccount:test-sa@test-project-id.iam.gserviceaccount.com",
         });
 
-        const component = new FirebaseApphost("test-apphost", {
+        const component = new ApphostComponent("test-apphost", {
             projectId: "test-project-id",
             region: "us-central1",
-            appId: "test-app-id",
-            appHostingServiceAccountEmail: "test-sa@test-project-id.iam.gserviceaccount.com",
-            appHostingService: dummyService,
-            appHostingServiceAccountIamMember: dummyIamMember,
-            gitopsProjectId: "gitops-project-id",
-            dockerRegistryName: "my-docker-repo",
-            domainId: "sriyav.com",
-            preferredCommit: "latest",
-            imageTagFile: "portfolio-image-tag.json",
-            websiteServerRepoName: "sriyav-portfolio",
-            servingLocality: "GLOBAL_ACCESS",
+            backendComponentArgs: {
+                websiteServerRepoName: "sriyav-portfolio",
+                appId: "test-app-id",
+                servingLocality: "GLOBAL_ACCESS",
+                appHostingServiceAccountEmail: "test-sa@test-project-id.iam.gserviceaccount.com",
+                appHostingService: dummyService,
+                appHostingServiceAccountIamMember: dummyIamMember,
+            },
+            buildComponentArgs: {
+                gitopsProjectId: "gitops-project-id",
+                dockerRegistryName: "my-docker-repo",
+                websiteServerRepoName: "sriyav-portfolio",
+                preferredCommit: "latest",
+                imageTagFile: "portfolio-image-tag.json",
+            },
+            trafficComponentArgs: {},
+            domainComponentArgs: {
+                domainId: "sriyav.com",
+            },
         });
 
         // 1. Verify App Hosting Backend inputs
@@ -51,15 +59,13 @@ describe("FirebaseApphost component", () => {
         expect(backendLocality).to.equal("GLOBAL_ACCESS");
         expect(backendId).to.equal("sriyav-portfolio");
 
-        // 2. Verify App Hosting Build inputs (using portfolio-image-tag.json commitSha)
-        // From portfolio-image-tag.json, commitSha is 2615f240158bc058a98a187a303b9e3d6751f4a5.
-        // buildId is build-2615f24-v3 (sliced to 30 chars).
+        // 2. Verify App Hosting Build inputs
         const buildId = await promiseOf(component.appHostingBuild.buildId);
         const buildSourceContainerImage = await promiseOf(component.appHostingBuild.source.apply(s => s?.container?.image));
 
-        expect(buildId).to.equal("build-2615f24-v3");
+        expect(buildId).to.equal("build-2ea295a-v3");
         expect(buildSourceContainerImage).to.equal(
-            "us-central1-docker.pkg.dev/gitops-project-id/my-docker-repo/sriyav-portfolio:2615f240158bc058a98a187a303b9e3d6751f4a5"
+            "us-central1-docker.pkg.dev/gitops-project-id/my-docker-repo/sriyav-portfolio:2ea295a2b60cd6bb206bbd8af5ab9825a353f6cb"
         );
 
         // 3. Verify App Hosting Traffic
@@ -88,23 +94,30 @@ describe("FirebaseApphost component", () => {
             member: "test-sa@test-project-id.iam.gserviceaccount.com",
         });
 
-        const component = new FirebaseApphost("test-apphost-fallback", {
+        const component = new ApphostComponent("test-apphost-fallback", {
             projectId: "test-project-id",
             region: "us-central1",
-            appId: "test-app-id",
-            appHostingServiceAccountEmail: "test-sa@test-project-id.iam.gserviceaccount.com",
-            appHostingService: dummyService,
-            appHostingServiceAccountIamMember: dummyIamMember,
-            gitopsProjectId: "gitops-project-id",
-            dockerRegistryName: "my-docker-repo",
-            domainId: "sriyav.com",
-            preferredCommit: "fallbacksha12345",
-            imageTagFile: "non-existent-image-tag.json",
-            websiteServerRepoName: "sriyav-portfolio",
-            servingLocality: "GLOBAL_ACCESS",
+            backendComponentArgs: {
+                websiteServerRepoName: "sriyav-portfolio",
+                appId: "test-app-id",
+                servingLocality: "GLOBAL_ACCESS",
+                appHostingServiceAccountEmail: "test-sa@test-project-id.iam.gserviceaccount.com",
+                appHostingService: dummyService,
+                appHostingServiceAccountIamMember: dummyIamMember,
+            },
+            buildComponentArgs: {
+                gitopsProjectId: "gitops-project-id",
+                dockerRegistryName: "my-docker-repo",
+                websiteServerRepoName: "sriyav-portfolio",
+                preferredCommit: "fallbacksha12345",
+                imageTagFile: "non-existent-image-tag.json",
+            },
+            trafficComponentArgs: {},
+            domainComponentArgs: {
+                domainId: "sriyav.com",
+            },
         });
 
-        // buildIdSuffix should be fallbacksha12345's first 7 chars: fallbac
         const buildId = await promiseOf(component.appHostingBuild.buildId);
         const buildSourceContainerImage = await promiseOf(component.appHostingBuild.source.apply(s => s?.container?.image));
 

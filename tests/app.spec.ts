@@ -19,7 +19,7 @@ describe("Pulumi Stack app.ts", () => {
         pulumi.runtime.setConfig("project:domainId", "sriyav.com");
         pulumi.runtime.setConfig("project:preferredCommit", "latest");
         pulumi.runtime.setConfig("project:imageTagFile", "portfolio-image-tag.json");
-        pulumi.runtime.setConfig("project:websiteServerRepoName", "sriyav-portfolio");
+        pulumi.runtime.setConfig("project:frontendRepoName", "sriyav-portfolio");
         pulumi.runtime.setConfig("project:servingLocality", "GLOBAL_ACCESS");
 
         setupMocks();
