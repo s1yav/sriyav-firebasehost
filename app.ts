@@ -126,7 +126,7 @@ function constructApphostComponentArgs(): ApphostComponentArgs {
     };
 }
 
-function constructApphostBackendComponentArgs(): ApphostBackendComponentArgs {
+function constructApphostBackendComponentArgs(): ApphostComponentArgs['backendComponentArgs'] {
     return {
         websiteServerRepoName: frontendRepoName,
         appId: webAppComponent.firebaseWebApp.appId,

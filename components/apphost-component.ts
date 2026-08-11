@@ -29,22 +29,22 @@ export interface ApphostComponentArgs {
     /**
      * Arguments for the ApphostBackendComponent.
      */
-    backendComponentArgs: ApphostBackendComponentArgs;
+    backendComponentArgs: Omit<ApphostBackendComponentArgs, "projectId" | "region">;
 
     /**
      * Arguments for the ApphostBuildComponent.
      */
-    buildComponentArgs: Omit<ApphostBuildComponentArgs, "backendComponent">;
+    buildComponentArgs: Omit<ApphostBuildComponentArgs, "projectId" | "region" | "backendComponent">;
 
     /**
      * Arguments for the ApphostTrafficComponent.
      */
-    trafficComponentArgs?: Omit<ApphostTrafficComponentArgs, "backendComponent" | "buildComponent">;
+    trafficComponentArgs?: Omit<ApphostTrafficComponentArgs, "projectId" | "region" | "backendComponent" | "buildComponent">;
 
     /**
      * Arguments for the ApphostDomainComponent.
      */
-    domainComponentArgs: Omit<ApphostDomainComponentArgs, "backendComponent">;
+    domainComponentArgs: Omit<ApphostDomainComponentArgs, "projectId" | "region" | "backendComponent">;
 }
 
 interface ApphostComponentOutputs {

@@ -13,14 +13,14 @@ import {
  */
 export interface ApphostDomainComponentArgs {
     /**
-     * The Google Cloud project ID. Optional if inherited from parent component.
+     * The Google Cloud project ID.
      */
-    projectId?: pulumi.Input<string>;
+    projectId: pulumi.Input<string>;
 
     /**
-     * The Google Cloud region. Optional if inherited from parent component.
+     * The Google Cloud region.
      */
-    region?: pulumi.Input<string>;
+    region: pulumi.Input<string>;
 
     /**
      * The domain name to map to the App Hosting backend (e.g. sriyav.com).
@@ -57,28 +57,14 @@ export class ApphostDomainComponent extends pulumi.ComponentResource {
         this.parentComponentName = name;
         this.parentComponentArgs = args;
 
-        this.projectId = this.extractProjectId(args.projectId);
-        this.region = this.extractRegion(args.region);
+        this.projectId = args.projectId;
+        this.region = args.region;
 
         this.appHostingDomain = this.createApexDomain();
         this.appHostingSubDomain = this.createSubDomain();
 
         this.parentComponentOutputs = this.constructParentComponentOutputs();
         this.registerOutputs(this.parentComponentOutputs);
-    }
-
-    private extractProjectId(projectId?: pulumi.Input<string>): pulumi.Input<string> {
-        if (!projectId) {
-            throw new Error("ApphostDomainComponent requires projectId argument.");
-        }
-        return projectId;
-    }
-
-    private extractRegion(region?: pulumi.Input<string>): pulumi.Input<string> {
-        if (!region) {
-            throw new Error("ApphostDomainComponent requires region argument.");
-        }
-        return region;
     }
 
     private constructParentComponentOutputs(): ApphostDomainComponentOutputs {
@@ -116,10 +102,6 @@ export class ApphostDomainComponent extends pulumi.ComponentResource {
         return [this.parentComponentArgs.backendComponent];
     }
 
-    private resolveBackendId(): pulumi.Input<string> {
-        return this.parentComponentArgs.backendComponent.appHostingBackend.backendId;
-    }
-
     private constructDomainArgs(targetDomainId: pulumi.Input<string>): gcp.firebase.AppHostingDomainArgs {
         return {
             project: this.projectId,
@@ -127,6 +109,10 @@ export class ApphostDomainComponent extends pulumi.ComponentResource {
             backend: this.resolveBackendId(),
             domainId: targetDomainId,
         };
+    }
+
+    private resolveBackendId(): pulumi.Input<string> {
+        return this.parentComponentArgs.backendComponent.appHostingBackend.backendId;
     }
 
     private constructChildResourceName(resourceSuffix: string): string {

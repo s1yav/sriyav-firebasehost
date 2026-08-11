@@ -13,14 +13,14 @@ import {
  */
 export interface ApphostTrafficComponentArgs {
     /**
-     * The Google Cloud project ID. Optional if inherited from parent component.
+     * The Google Cloud project ID.
      */
-    projectId?: pulumi.Input<string>;
+    projectId: pulumi.Input<string>;
 
     /**
-     * The Google Cloud region. Optional if inherited from parent component.
+     * The Google Cloud region.
      */
-    region?: pulumi.Input<string>;
+    region: pulumi.Input<string>;
 
     /**
      * The parent ApphostBackendComponent dependency.
@@ -55,26 +55,12 @@ export class ApphostTrafficComponent extends pulumi.ComponentResource {
         this.parentComponentName = name;
         this.parentComponentArgs = args;
 
-        this.projectId = this.extractProjectId(args.projectId);
-        this.region = this.extractRegion(args.region);
+        this.projectId = args.projectId;
+        this.region = args.region;
 
         this.appHostingTraffic = this.createAppHostingTraffic();
         this.parentComponentOutputs = this.constructParentComponentOutputs();
         this.registerOutputs(this.parentComponentOutputs);
-    }
-
-    private extractProjectId(projectId?: pulumi.Input<string>): pulumi.Input<string> {
-        if (!projectId) {
-            throw new Error("ApphostTrafficComponent requires projectId argument.");
-        }
-        return projectId;
-    }
-
-    private extractRegion(region?: pulumi.Input<string>): pulumi.Input<string> {
-        if (!region) {
-            throw new Error("ApphostTrafficComponent requires region argument.");
-        }
-        return region;
     }
 
     private constructParentComponentOutputs(): ApphostTrafficComponentOutputs {
