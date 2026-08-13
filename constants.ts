@@ -21,6 +21,7 @@ export const PRODUCT_MANAGER_AGENT_HOST_RESOURCE_NAME = "product-manager-agent-h
 // Child Resource Suffixes
 export const FIREBASE_PROJECT_RESOURCE_SUFFIX = "firebase-project";
 export const WEB_APP_RESOURCE_SUFFIX = "firebase-webapp";
+export const PRODUCT_MANAGER_AGENT_HOST_RESOURCE_SUFFIX = "pm-agent-host";
 
 export const FIREBASE_SA_RESOURCE_SUFFIX = "firebase-sa";
 export const FIREBASE_SA_IMPERSONATOR_RESOURCE_SUFFIX = "firebase-sa-impersonator";
