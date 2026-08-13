@@ -4,6 +4,7 @@ import {
     ENABLE_SERVICE_COMPONENT_TYPE,
     FIREBASE_API_SERVICE_NAME,
     FIREBASE_APPHOSTING_API_SERVICE_NAME,
+    SECRET_MANAGER_API_SERVICE_NAME,
 } from "../constants";
 
 export interface EnableServiceComponentArgs {
@@ -16,11 +17,13 @@ export interface EnableServiceComponentArgs {
 interface EnableServiceComponentOutputs {
     firebaseServiceEnabled: gcp.projects.Service;
     firebaseapphostingServiceEnabled: gcp.projects.Service;
+    secretManagerServiceEnabled: gcp.projects.Service;
 }
 
 export class EnableServiceComponent extends pulumi.ComponentResource {
     public readonly firebaseServiceEnabled: gcp.projects.Service;
     public readonly firebaseapphostingServiceEnabled: gcp.projects.Service;
+    public readonly secretManagerServiceEnabled: gcp.projects.Service;
     private readonly parentComponentName: string;
     private readonly parentComponentArgs: EnableServiceComponentArgs;
     private readonly parentComponentOutputs: EnableServiceComponentOutputs;
@@ -31,6 +34,7 @@ export class EnableServiceComponent extends pulumi.ComponentResource {
         this.parentComponentArgs = args;
         this.firebaseServiceEnabled = this.enableFirebaseService();
         this.firebaseapphostingServiceEnabled = this.enableFirebaseAppHostingService();
+        this.secretManagerServiceEnabled = this.enableSecretManagerService();
 
         this.parentComponentOutputs = this.constructParentComponentOutputs();
         this.registerOutputs(this.parentComponentOutputs);
@@ -40,6 +44,7 @@ export class EnableServiceComponent extends pulumi.ComponentResource {
         return {
             firebaseServiceEnabled: this.firebaseServiceEnabled,
             firebaseapphostingServiceEnabled: this.firebaseapphostingServiceEnabled,
+            secretManagerServiceEnabled: this.secretManagerServiceEnabled,
         };
     }
 
@@ -49,6 +54,10 @@ export class EnableServiceComponent extends pulumi.ComponentResource {
 
     private enableFirebaseAppHostingService(): gcp.projects.Service {
         return this.enableService(FIREBASE_APPHOSTING_API_SERVICE_NAME);
+    }
+
+    private enableSecretManagerService(): gcp.projects.Service {
+        return this.enableService(SECRET_MANAGER_API_SERVICE_NAME);
     }
 
     private enableService(service: string): gcp.projects.Service {

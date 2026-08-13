@@ -38,6 +38,7 @@ export const APPHOST_DOMAIN_CHILD_SUFFIX = "domain-component";
 // GCP Service Names
 export const FIREBASE_API_SERVICE_NAME = "firebase.googleapis.com";
 export const FIREBASE_APPHOSTING_API_SERVICE_NAME = "firebaseapphosting.googleapis.com";
+export const SECRET_MANAGER_API_SERVICE_NAME = "secretmanager.googleapis.com";
 
 // IAM Roles & Service Account Constants
 export const TOKEN_CREATOR_ROLE = "roles/iam.serviceAccountTokenCreator";
