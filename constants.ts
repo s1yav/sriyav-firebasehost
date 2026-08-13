@@ -8,6 +8,7 @@ export const APPHOST_BACKEND_COMPONENT_TYPE = "custom:components:ApphostBackend"
 export const APPHOST_BUILD_COMPONENT_TYPE = "custom:components:ApphostBuild";
 export const APPHOST_TRAFFIC_COMPONENT_TYPE = "custom:components:ApphostTraffic";
 export const APPHOST_DOMAIN_COMPONENT_TYPE = "custom:components:ApphostDomain";
+export const PRODUCT_MANAGER_AGENT_HOST_COMPONENT_TYPE = "custom:components:ProductManagerAgentHost";
 
 // Stack Resource Names
 export const ENABLE_SERVICE_COMPONENT_RESOURCE_NAME = "enable-service-component";
@@ -15,6 +16,7 @@ export const FIREBASE_PROJECT_COMPONENT_RESOURCE_NAME = "firebase-project-compon
 export const WEB_APP_COMPONENT_RESOURCE_NAME = "web-app-component";
 export const IDENTITY_COMPONENT_RESOURCE_NAME = "identity-component";
 export const APPHOST_COMPONENT_RESOURCE_NAME = "apphost-component";
+export const PRODUCT_MANAGER_AGENT_HOST_RESOURCE_NAME = "product-manager-agent-host";
 
 // Child Resource Suffixes
 export const FIREBASE_PROJECT_RESOURCE_SUFFIX = "firebase-project";
