@@ -1,5 +1,5 @@
 import * as pulumi from "@pulumi/pulumi";
-import { Service as CloudRunv2Service, ServiceArgs as CloudRunv2ServiceArgs } from "../../constructs/cloudrunv2/service";
+import { Service as CloudRunv2Service, ServiceArgs as CloudRunv2ServiceArgs } from "gcp-constructs/cloudrunv2/service";
 import {
     PRODUCT_MANAGER_AGENT_HOST_COMPONENT_TYPE,
     PRODUCT_MANAGER_AGENT_HOST_RESOURCE_SUFFIX,

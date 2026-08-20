@@ -9,6 +9,7 @@ export const APPHOST_BUILD_COMPONENT_TYPE = "custom:components:ApphostBuild";
 export const APPHOST_TRAFFIC_COMPONENT_TYPE = "custom:components:ApphostTraffic";
 export const APPHOST_DOMAIN_COMPONENT_TYPE = "custom:components:ApphostDomain";
 export const PRODUCT_MANAGER_AGENT_HOST_COMPONENT_TYPE = "custom:components:ProductManagerAgentHost";
+export const PRODUCT_MANAGER_IDENTITY_TYPE = "custom:components:ProductManagerIdentity";
 export const AGENT_BUILDER_IDENTITY_TYPE = "custom:components:AgentBuilderIdentity";
 
 // Stack Resource Names
@@ -23,6 +24,8 @@ export const PRODUCT_MANAGER_AGENT_HOST_RESOURCE_NAME = "product-manager-agent-h
 export const FIREBASE_PROJECT_RESOURCE_SUFFIX = "firebase-project";
 export const WEB_APP_RESOURCE_SUFFIX = "firebase-webapp";
 export const PRODUCT_MANAGER_AGENT_HOST_RESOURCE_SUFFIX = "pm-agent-host";
+export const PRODUCT_MANAGER_IDENTITY_RESOURCE_SUFFIX = "pm-agent-sa";
+export const PRODUCT_MANAGER_OWNER_ROLE_RESOURCE_SUFFIX = "pm-agent-owner-role";
 export const AGENT_BUILDER_SA_RESOURCE_SUFFIX = "agent-builder-sa";
 export const AGENT_BUILDER_OWNER_ROLE_RESOURCE_SUFFIX = "agent-builder-owner-role";
 export const AGENT_BUILDER_IMPERSONATOR_RESOURCE_SUFFIX = "agent-builder-impersonator";
