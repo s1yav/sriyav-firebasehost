@@ -88,12 +88,8 @@ export class IdentityComponent extends pulumi.ComponentResource {
         return {
             serviceAccountId: this.firebaseServiceAccount.name,
             role: TOKEN_CREATOR_ROLE,
-            member: this.constructFirebaseSaImpersonatorIdentity(),
+            member: pulumi.interpolate`serviceAccount:${this.parentComponentArgs.gitopsCloudbuildSa}`,
         };
-    }
-
-    private constructFirebaseSaImpersonatorIdentity(): pulumi.Input<string> {
-        return this.constructServiceAccountMemberIdentity(this.parentComponentArgs.gitopsCloudbuildSa);
     }
 
     private constructFirebaseSaOwnerRoleMember(): gcp.projects.IAMMember {
@@ -110,19 +106,11 @@ export class IdentityComponent extends pulumi.ComponentResource {
         return {
             project: this.parentComponentArgs.projectId,
             role: OWNER_ROLE,
-            member: this.constructFirebaseSaOwnerRoleMemberIdentity(),
+            member: pulumi.interpolate`serviceAccount:${this.firebaseServiceAccount.email}`,
         };
-    }
-
-    private constructFirebaseSaOwnerRoleMemberIdentity(): pulumi.Input<string> {
-        return this.constructServiceAccountMemberIdentity(this.firebaseServiceAccount.email);
     }
 
     private constructChildResourceName(resourceName: string): string {
         return `${this.parentComponentName}-${resourceName}`;
-    }
-
-    private constructServiceAccountMemberIdentity(serviceAccountEmail: pulumi.Input<string>): pulumi.Input<string> {
-        return pulumi.interpolate`serviceAccount:${serviceAccountEmail}`;
     }
 }
