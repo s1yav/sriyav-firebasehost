@@ -57,13 +57,9 @@ export class IdentityComponent extends pulumi.ComponentResource {
     }
 
     private constructFirebaseSa(): gcp.serviceaccount.Account {
-        const firebaseSaResourceName = this.constructFirebaseSaResourceName();
+        const firebaseSaResourceName = `${this.parentComponentName}-${FIREBASE_SA_RESOURCE_SUFFIX}`;
         const firebaseSaArgs = this.constructFirebaseSaArgs();
         return new gcp.serviceaccount.Account(firebaseSaResourceName, firebaseSaArgs, { parent: this });
-    }
-
-    private constructFirebaseSaResourceName(): string {
-        return this.constructChildResourceName(FIREBASE_SA_RESOURCE_SUFFIX);
     }
 
     private constructFirebaseSaArgs(): gcp.serviceaccount.AccountArgs {
@@ -75,13 +71,9 @@ export class IdentityComponent extends pulumi.ComponentResource {
     }
 
     private constructFirebaseSaImpersonator(): gcp.serviceaccount.IAMMember {
-        const firebaseSaImpersonatorResourceName = this.constructFirebaseSaImpersonatorResourceName();
+        const firebaseSaImpersonatorResourceName = `${this.parentComponentName}-${FIREBASE_SA_IMPERSONATOR_RESOURCE_SUFFIX}`;
         const firebaseSaImpersonatorArgs = this.constructFirebaseSaImpersonatorArgs();
         return new gcp.serviceaccount.IAMMember(firebaseSaImpersonatorResourceName, firebaseSaImpersonatorArgs, { parent: this });
-    }
-
-    private constructFirebaseSaImpersonatorResourceName(): string {
-        return this.constructChildResourceName(FIREBASE_SA_IMPERSONATOR_RESOURCE_SUFFIX);
     }
 
     private constructFirebaseSaImpersonatorArgs(): gcp.serviceaccount.IAMMemberArgs {
@@ -93,13 +85,9 @@ export class IdentityComponent extends pulumi.ComponentResource {
     }
 
     private constructFirebaseSaOwnerRoleMember(): gcp.projects.IAMMember {
-        const firebaseSaOwnerRoleMemberResourceName = this.constructFirebaseSaOwnerRoleMemberResourceName();
+        const firebaseSaOwnerRoleMemberResourceName = `${this.parentComponentName}-${FIREBASE_SA_OWNER_ROLE_MEMBER_RESOURCE_SUFFIX}`;
         const firebaseSaOwnerRoleMemberArgs = this.constructFirebaseSaOwnerRoleMemberArgs();
         return new gcp.projects.IAMMember(firebaseSaOwnerRoleMemberResourceName, firebaseSaOwnerRoleMemberArgs, { parent: this });
-    }
-
-    private constructFirebaseSaOwnerRoleMemberResourceName(): string {
-        return this.constructChildResourceName(FIREBASE_SA_OWNER_ROLE_MEMBER_RESOURCE_SUFFIX);
     }
 
     private constructFirebaseSaOwnerRoleMemberArgs(): gcp.projects.IAMMemberArgs {
@@ -110,7 +98,4 @@ export class IdentityComponent extends pulumi.ComponentResource {
         };
     }
 
-    private constructChildResourceName(resourceName: string): string {
-        return `${this.parentComponentName}-${resourceName}`;
-    }
 }
