@@ -28,25 +28,23 @@ import {
     servingLocality,
 } from "./configuration";
 
-const enableServiceComponentResourceName = constructEnableServiceComponentResourceName();
+const enableServiceComponentResourceName = `${stackName}-${ENABLE_SERVICE_COMPONENT_RESOURCE_NAME}`;
 const enableServiceComponentArgs = constructEnableServiceComponentArgs();
 const enableServiceComponent = new EnableServiceComponent(enableServiceComponentResourceName, enableServiceComponentArgs);
 
-const firebaseProjectComponentResourceName = constructFirebaseProjectComponentResourceName();
+const firebaseProjectComponentResourceName = `${stackName}-${FIREBASE_PROJECT_COMPONENT_RESOURCE_NAME}`;
 const firebaseProjectComponentArgs = constructFirebaseProjectComponentArgs();
-const firebaseProjectComponentOptions = constructFirebaseProjectComponentOptions();
-const firebaseProjectComponent = new FirebaseProjectComponent(firebaseProjectComponentResourceName, firebaseProjectComponentArgs, firebaseProjectComponentOptions);
+const firebaseProjectComponent = new FirebaseProjectComponent(firebaseProjectComponentResourceName, firebaseProjectComponentArgs, { dependsOn: enableServiceComponent });
 
-const webAppComponentResourceName = constructWebAppComponentResourceName();
+const webAppComponentResourceName = `${stackName}-${WEB_APP_COMPONENT_RESOURCE_NAME}`;
 const webAppComponentArgs = constructWebAppComponentArgs();
-const webAppComponentOptions = constructWebAppComponentOptions();
-const webAppComponent = new WebAppComponent(webAppComponentResourceName, webAppComponentArgs, webAppComponentOptions);
+const webAppComponent = new WebAppComponent(webAppComponentResourceName, webAppComponentArgs, { dependsOn: firebaseProjectComponent });
 
-const identityComponentResourceName = constructIdentityComponentResourceName();
+const identityComponentResourceName = `${stackName}-${IDENTITY_COMPONENT_RESOURCE_NAME}`;
 const identityComponentArgs = constructIdentityComponentArgs();
 const identityComponent = new IdentityComponent(identityComponentResourceName, identityComponentArgs);
 
-const apphostComponentResourceName = constructApphostComponentResourceName();
+const apphostComponentResourceName = `${stackName}-${APPHOST_COMPONENT_RESOURCE_NAME}`;
 const apphostComponentArgs = constructApphostComponentArgs();
 const apphostComponent = new ApphostComponent(apphostComponentResourceName, apphostComponentArgs);
 
@@ -57,34 +55,16 @@ export const backendName = apphostComponent.appHostingBackend.backendId;
 export const appName = webAppComponent.firebaseWebApp.displayName;
 export const domainStatus = apphostComponent.appHostingDomain.customDomainStatuses;
 
-function constructEnableServiceComponentResourceName(): string {
-    return constructComponentResourceName(ENABLE_SERVICE_COMPONENT_RESOURCE_NAME);
-}
-
 function constructEnableServiceComponentArgs(): EnableServiceComponentArgs {
     return {
         ...getCommonComponentArgs(),
     };
 }
 
-function constructFirebaseProjectComponentResourceName(): string {
-    return constructComponentResourceName(FIREBASE_PROJECT_COMPONENT_RESOURCE_NAME);
-}
-
 function constructFirebaseProjectComponentArgs(): FirebaseProjectComponentArgs {
     return {
         ...getCommonComponentArgs(),
     };
-}
-
-function constructFirebaseProjectComponentOptions(): pulumi.ComponentResourceOptions {
-    return {
-        dependsOn: enableServiceComponent,
-    };
-}
-
-function constructWebAppComponentResourceName(): string {
-    return constructComponentResourceName(WEB_APP_COMPONENT_RESOURCE_NAME);
 }
 
 function constructWebAppComponentArgs(): WebAppComponentArgs {
@@ -94,25 +74,11 @@ function constructWebAppComponentArgs(): WebAppComponentArgs {
     };
 }
 
-function constructWebAppComponentOptions(): pulumi.ComponentResourceOptions {
-    return {
-        dependsOn: firebaseProjectComponent,
-    };
-}
-
-function constructIdentityComponentResourceName(): string {
-    return constructComponentResourceName(IDENTITY_COMPONENT_RESOURCE_NAME);
-}
-
 function constructIdentityComponentArgs(): IdentityComponentArgs {
     return {
         ...getCommonComponentArgs(),
         gitopsCloudbuildSa,
     };
-}
-
-function constructApphostComponentResourceName(): string {
-    return constructComponentResourceName(APPHOST_COMPONENT_RESOURCE_NAME);
 }
 
 function constructApphostComponentArgs(): ApphostComponentArgs {
@@ -155,10 +121,6 @@ function constructApphostDomainComponentArgs(): ApphostComponentArgs['domainComp
     return {
         domainId,
     };
-}
-
-function constructComponentResourceName(componentName: string): string {
-    return `${stackName}-${componentName}`;
 }
 
 function getCommonComponentArgs() {
