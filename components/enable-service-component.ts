@@ -61,35 +61,20 @@ export class EnableServiceComponent extends pulumi.ComponentResource {
     }
 
     private enableService(service: string): gcp.projects.Service {
-        const serviceResourceName = this.constructServiceResourceName(service);
+        const serviceResourceName = `${this.parentComponentName}-${this.getServicePrefix(service)}`;
         const serviceArgs = this.constructEnableServiceArgs(service);
         return new gcp.projects.Service(serviceResourceName, serviceArgs, { parent: this });
-    }
-
-    private constructServiceResourceName(service: string): string {
-        const servicePrefix = this.getServicePrefix(service);
-        return this.constructChildResourceName(servicePrefix);
     }
 
     private getServicePrefix(service: string): string {
         return service.split(".")[0];
     }
 
-    private constructChildResourceName(resourceName: string): string {
-        return `${this.parentComponentName}-${resourceName}`;
-    }
-
     private constructEnableServiceArgs(service: string): gcp.projects.ServiceArgs {
-        return {
-            ...this.getCommonEnableServiceArgs(),
-            service,
-        };
-    }
-
-    private getCommonEnableServiceArgs() {
         return {
             project: this.parentComponentArgs.projectId,
             disableOnDestroy: false,
+            service,
         };
     }
 }

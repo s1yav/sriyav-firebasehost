@@ -39,19 +39,9 @@ export class FirebaseProjectComponent extends pulumi.ComponentResource {
     }
 
     private createFirebaseProject(): gcp.firebase.Project {
-        const firebaseProjectResourceName = this.constructFirebaseProjectResourceName();
+        const firebaseProjectResourceName = `${this.parentComponentName}-${FIREBASE_PROJECT_RESOURCE_SUFFIX}`;
         const firebaseProjectArgs = this.constructFirebaseProjectArgs();
-        return new gcp.firebase.Project(firebaseProjectResourceName, firebaseProjectArgs, {
-            parent: this,
-        });
-    }
-
-    private constructFirebaseProjectResourceName(): string {
-        return this.constructChildResourceName(FIREBASE_PROJECT_RESOURCE_SUFFIX);
-    }
-
-    private constructChildResourceName(resourceName: string): string {
-        return `${this.parentComponentName}-${resourceName}`;
+        return new gcp.firebase.Project(firebaseProjectResourceName, firebaseProjectArgs, { parent: this });
     }
 
     private constructFirebaseProjectArgs(): gcp.firebase.ProjectArgs {

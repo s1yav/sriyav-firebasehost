@@ -107,10 +107,9 @@ export class ApphostComponent extends pulumi.ComponentResource {
     }
 
     private createBackendComponent(): ApphostBackendComponent {
-        const resourceName = this.constructChildResourceName(APPHOST_BACKEND_CHILD_SUFFIX);
+        const resourceName = `${this.parentComponentName}-${APPHOST_BACKEND_CHILD_SUFFIX}`;
         const backendArgs = this.constructBackendComponentArgs();
-        const options = this.constructChildComponentResourceOptions();
-        return new ApphostBackendComponent(resourceName, backendArgs, options);
+        return new ApphostBackendComponent(resourceName, backendArgs, { parent: this });
     }
 
     private constructBackendComponentArgs(): ApphostBackendComponentArgs {
@@ -128,10 +127,9 @@ export class ApphostComponent extends pulumi.ComponentResource {
     }
 
     private createBuildComponent(): ApphostBuildComponent {
-        const resourceName = this.constructChildResourceName(APPHOST_BUILD_CHILD_SUFFIX);
+        const resourceName = `${this.parentComponentName}-${APPHOST_BUILD_CHILD_SUFFIX}`;
         const buildArgs = this.constructBuildComponentArgs();
-        const options = this.constructChildComponentResourceOptions();
-        return new ApphostBuildComponent(resourceName, buildArgs, options);
+        return new ApphostBuildComponent(resourceName, buildArgs, { parent: this });
     }
 
     private constructBuildComponentArgs(): ApphostBuildComponentArgs {
@@ -150,10 +148,9 @@ export class ApphostComponent extends pulumi.ComponentResource {
     }
 
     private createTrafficComponent(): ApphostTrafficComponent {
-        const resourceName = this.constructChildResourceName(APPHOST_TRAFFIC_CHILD_SUFFIX);
+        const resourceName = `${this.parentComponentName}-${APPHOST_TRAFFIC_CHILD_SUFFIX}`;
         const trafficArgs = this.constructTrafficComponentArgs();
-        const options = this.constructChildComponentResourceOptions();
-        return new ApphostTrafficComponent(resourceName, trafficArgs, options);
+        return new ApphostTrafficComponent(resourceName, trafficArgs, { parent: this });
     }
 
     private constructTrafficComponentArgs(): ApphostTrafficComponentArgs {
@@ -173,10 +170,9 @@ export class ApphostComponent extends pulumi.ComponentResource {
     }
 
     private createDomainComponent(): ApphostDomainComponent {
-        const resourceName = this.constructChildResourceName(APPHOST_DOMAIN_CHILD_SUFFIX);
+        const resourceName = `${this.parentComponentName}-${APPHOST_DOMAIN_CHILD_SUFFIX}`;
         const domainArgs = this.constructDomainComponentArgs();
-        const options = this.constructChildComponentResourceOptions();
-        return new ApphostDomainComponent(resourceName, domainArgs, options);
+        return new ApphostDomainComponent(resourceName, domainArgs, { parent: this });
     }
 
     private constructDomainComponentArgs(): ApphostDomainComponentArgs {
@@ -192,15 +188,5 @@ export class ApphostComponent extends pulumi.ComponentResource {
             region: this.parentComponentArgs.region,
             backendComponent: this.backendComponent,
         };
-    }
-
-    private constructChildComponentResourceOptions(): pulumi.ComponentResourceOptions {
-        return {
-            parent: this,
-        };
-    }
-
-    private constructChildResourceName(resourceSuffix: string): string {
-        return `${this.parentComponentName}-${resourceSuffix}`;
     }
 }
