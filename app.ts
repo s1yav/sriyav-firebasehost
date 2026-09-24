@@ -52,7 +52,7 @@ const apphostComponent = new ApphostComponent(apphostComponentResourceName, apph
 
 const mouseHostResourceName = `${stackName}-${MOUSE_HOST_RESOURCE_NAME}`;
 const mouseHostArgs = constructMouseHostArgs();
-const mouseHost = new MouseHost(mouseHostResourceName, mouseHostArgs);
+const mouseHost = new MouseHost(mouseHostResourceName, mouseHostArgs, { dependsOn: identityComponent });
 
 // Export the App Hosting URI and backend details
 export const apex = apphostComponent.appHostingDomain.domainId.apply((domain: string) => `https://${domain}`);
@@ -135,6 +135,7 @@ function constructMouseHostArgs(): MouseHostArgs {
         location: region,
         gitopsProjectId,
         dockerRegistryName,
+        serviceAccount: identityComponent.mouseAgentServiceAccount.email,
     };
 }
 

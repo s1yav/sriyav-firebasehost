@@ -45,6 +45,8 @@ export const AGENT_BUILDER_IMPERSONATOR_RESOURCE_SUFFIX = "agent-builder-imperso
 export const FIREBASE_SA_RESOURCE_SUFFIX = "firebase-sa";
 export const FIREBASE_SA_IMPERSONATOR_RESOURCE_SUFFIX = "firebase-sa-impersonator";
 export const FIREBASE_SA_OWNER_ROLE_MEMBER_RESOURCE_SUFFIX = "firebase-sa-owner-role-member";
+export const MOUSE_AGENT_SA_RESOURCE_SUFFIX = "mouse-agent-sa";
+export const MOUSE_AGENT_VERTEX_ROLE_MEMBER_RESOURCE_SUFFIX = "mouse-agent-vertex-role-member";
 
 export const APPHOST_BACKEND_RESOURCE_SUFFIX = "appHostingBackend";
 export const APPHOST_BUILD_RESOURCE_SUFFIX = "appHostingBuild";
@@ -65,8 +67,11 @@ export const SECRET_MANAGER_API_SERVICE_NAME = "secretmanager.googleapis.com";
 // IAM Roles & Service Account Constants
 export const TOKEN_CREATOR_ROLE = "roles/iam.serviceAccountTokenCreator";
 export const OWNER_ROLE = "roles/owner";
+export const VERTEX_AI_USER_ROLE = "roles/aiplatform.user";
 export const FIREBASE_SA_ID = "sriyav-firebasehost-sa";
 export const FIREBASE_SA_DISPLAY_NAME = "Firebase App Hosting compute service account";
+export const MOUSE_AGENT_SA_ID = "mouse-agent-sa";
+export const MOUSE_AGENT_SA_DISPLAY_NAME = "Mouse Agent Cloud Run service account";
 
 // Build & Traffic Constants
 export const BUILD_ID_PREFIX = "build-";

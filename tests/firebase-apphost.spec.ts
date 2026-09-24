@@ -1,4 +1,6 @@
 import { expect } from "chai";
+import * as fs from "fs";
+import * as path from "path";
 import * as gcp from "@pulumi/gcp";
 import { setupMocks, promiseOf } from "./setup";
 import { ApphostComponent } from "../components/apphost-component";
@@ -63,9 +65,13 @@ describe("FirebaseApphost component", () => {
         const buildId = await promiseOf(component.appHostingBuild.buildId);
         const buildSourceContainerImage = await promiseOf(component.appHostingBuild.source.apply(s => s?.container?.image));
 
-        expect(buildId).to.equal("build-407bbe1-v3");
+        const portfolioTagFile = path.resolve(__dirname, "../portfolio-image-tag.json");
+        const expectedPortfolioSha = JSON.parse(fs.readFileSync(portfolioTagFile, "utf-8")).commitSha;
+        const expectedPortfolioShortSha = expectedPortfolioSha.substring(0, 7);
+
+        expect(buildId).to.equal(`build-${expectedPortfolioShortSha}-v3`);
         expect(buildSourceContainerImage).to.equal(
-            "us-central1-docker.pkg.dev/gitops-project-id/my-docker-repo/sriyav-portfolio:407bbe159998585209782c6c517217cad6cd0509"
+            `us-central1-docker.pkg.dev/gitops-project-id/my-docker-repo/sriyav-portfolio:${expectedPortfolioSha}`
         );
 
         // 3. Verify App Hosting Traffic

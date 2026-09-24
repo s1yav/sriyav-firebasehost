@@ -51,6 +51,11 @@ export interface MouseHostArgs {
     serviceName?: pulumi.Input<string>;
 
     /**
+     * Optional service account email running the Cloud Run service.
+     */
+    serviceAccount?: pulumi.Input<string>;
+
+    /**
      * Optional direct AgentHost arguments override.
      */
     agentHostArgs?: AgentHostArgs;
@@ -92,6 +97,7 @@ export class MouseHost extends pulumi.ComponentResource {
             agentImage,
             location: this.mouseHostArgs.location,
             serviceName: this.mouseHostArgs.serviceName,
+            serviceAccount: this.mouseHostArgs.serviceAccount,
         };
     }
 

@@ -30,5 +30,20 @@ describe("IdentityComponent", () => {
         const impersonationMember = await promiseOf(component.firebaseServiceAccountImpersonator.member);
         expect(impersonationRole).to.equal("roles/iam.serviceAccountTokenCreator");
         expect(impersonationMember).to.equal("serviceAccount:cloudbuild@gitops-proj.iam.gserviceaccount.com");
+
+        // Verify Mouse Agent service account and Vertex AI role member
+        const mouseSaId = await promiseOf(component.mouseAgentServiceAccount.accountId);
+        const mouseSaDisplayName = await promiseOf(component.mouseAgentServiceAccount.displayName);
+        const mouseSaProject = await promiseOf(component.mouseAgentServiceAccount.project);
+        expect(mouseSaId).to.equal("mouse-agent-sa");
+        expect(mouseSaDisplayName).to.equal("Mouse Agent Cloud Run service account");
+        expect(mouseSaProject).to.equal("test-project-id");
+
+        const vertexRole = await promiseOf(component.mouseAgentVertexRoleMember.role);
+        const vertexMember = await promiseOf(component.mouseAgentVertexRoleMember.member);
+        const vertexProject = await promiseOf(component.mouseAgentVertexRoleMember.project);
+        expect(vertexRole).to.equal("roles/aiplatform.user");
+        expect(vertexProject).to.equal("test-project-id");
+        expect(vertexMember).to.equal("serviceAccount:mouse-agent-sa@test-project-id.iam.gserviceaccount.com");
     });
 });

@@ -87,7 +87,7 @@ export class ApphostBackendComponent extends pulumi.ComponentResource {
     }
 
     private createAppHostingBackend(): gcp.firebase.AppHostingBackend {
-        const resourceName = this.constructChildResourceName(APPHOST_BACKEND_RESOURCE_SUFFIX);
+        const resourceName = `${this.parentComponentName}-${APPHOST_BACKEND_RESOURCE_SUFFIX}`;
         const backendArgs = this.constructBackendArgs();
         const options = this.constructBackendResourceOptions();
         return new gcp.firebase.AppHostingBackend(resourceName, backendArgs, options);
@@ -96,15 +96,11 @@ export class ApphostBackendComponent extends pulumi.ComponentResource {
     private constructBackendResourceOptions(): pulumi.ComponentResourceOptions {
         return {
             parent: this,
-            dependsOn: this.constructBackendDependencies(),
+            dependsOn: [
+                this.parentComponentArgs.appHostingService,
+                this.parentComponentArgs.appHostingServiceAccountIamMember,
+            ],
         };
-    }
-
-    private constructBackendDependencies(): pulumi.Resource[] {
-        return [
-            this.parentComponentArgs.appHostingService,
-            this.parentComponentArgs.appHostingServiceAccountIamMember,
-        ];
     }
 
     private constructBackendArgs(): gcp.firebase.AppHostingBackendArgs {
@@ -116,9 +112,5 @@ export class ApphostBackendComponent extends pulumi.ComponentResource {
             servingLocality: this.parentComponentArgs.servingLocality,
             serviceAccount: this.parentComponentArgs.appHostingServiceAccountEmail,
         };
-    }
-
-    private constructChildResourceName(resourceSuffix: string): string {
-        return `${this.parentComponentName}-${resourceSuffix}`;
     }
 }

@@ -5,10 +5,15 @@ import {
     FIREBASE_SA_RESOURCE_SUFFIX,
     FIREBASE_SA_IMPERSONATOR_RESOURCE_SUFFIX,
     FIREBASE_SA_OWNER_ROLE_MEMBER_RESOURCE_SUFFIX,
+    MOUSE_AGENT_SA_RESOURCE_SUFFIX,
+    MOUSE_AGENT_VERTEX_ROLE_MEMBER_RESOURCE_SUFFIX,
     TOKEN_CREATOR_ROLE,
     OWNER_ROLE,
+    VERTEX_AI_USER_ROLE,
     FIREBASE_SA_ID,
     FIREBASE_SA_DISPLAY_NAME,
+    MOUSE_AGENT_SA_ID,
+    MOUSE_AGENT_SA_DISPLAY_NAME,
 } from "../constants";
 
 export interface IdentityComponentArgs {
@@ -26,12 +31,16 @@ interface IdentityComponentOutputs {
     readonly firebaseServiceAccount: gcp.serviceaccount.Account;
     readonly firebaseServiceAccountOwnerRoleMember: gcp.projects.IAMMember;
     readonly firebaseServiceAccountImpersonator: gcp.serviceaccount.IAMMember;
+    readonly mouseAgentServiceAccount: gcp.serviceaccount.Account;
+    readonly mouseAgentVertexRoleMember: gcp.projects.IAMMember;
 }
 
 export class IdentityComponent extends pulumi.ComponentResource {
     public readonly firebaseServiceAccount: gcp.serviceaccount.Account;
     public readonly firebaseServiceAccountOwnerRoleMember: gcp.projects.IAMMember;
     public readonly firebaseServiceAccountImpersonator: gcp.serviceaccount.IAMMember;
+    public readonly mouseAgentServiceAccount: gcp.serviceaccount.Account;
+    public readonly mouseAgentVertexRoleMember: gcp.projects.IAMMember;
     private readonly parentComponentName: string;
     private readonly parentComponentArgs: IdentityComponentArgs;
     private readonly parentComponentOutputs: IdentityComponentOutputs;
@@ -43,6 +52,8 @@ export class IdentityComponent extends pulumi.ComponentResource {
         this.firebaseServiceAccount = this.constructFirebaseSa();
         this.firebaseServiceAccountOwnerRoleMember = this.constructFirebaseSaOwnerRoleMember();
         this.firebaseServiceAccountImpersonator = this.constructFirebaseSaImpersonator();
+        this.mouseAgentServiceAccount = this.constructMouseAgentSa();
+        this.mouseAgentVertexRoleMember = this.constructMouseAgentVertexRoleMember();
 
         this.parentComponentOutputs = this.constructParentComponentOutputs();
         this.registerOutputs(this.parentComponentOutputs);
@@ -53,6 +64,8 @@ export class IdentityComponent extends pulumi.ComponentResource {
             firebaseServiceAccount: this.firebaseServiceAccount,
             firebaseServiceAccountOwnerRoleMember: this.firebaseServiceAccountOwnerRoleMember,
             firebaseServiceAccountImpersonator: this.firebaseServiceAccountImpersonator,
+            mouseAgentServiceAccount: this.mouseAgentServiceAccount,
+            mouseAgentVertexRoleMember: this.mouseAgentVertexRoleMember,
         };
     }
 
@@ -98,4 +111,31 @@ export class IdentityComponent extends pulumi.ComponentResource {
         };
     }
 
+    private constructMouseAgentSa(): gcp.serviceaccount.Account {
+        const mouseAgentSaResourceName = `${this.parentComponentName}-${MOUSE_AGENT_SA_RESOURCE_SUFFIX}`;
+        const mouseAgentSaArgs = this.constructMouseAgentSaArgs();
+        return new gcp.serviceaccount.Account(mouseAgentSaResourceName, mouseAgentSaArgs, { parent: this });
+    }
+
+    private constructMouseAgentSaArgs(): gcp.serviceaccount.AccountArgs {
+        return {
+            project: this.parentComponentArgs.projectId,
+            accountId: MOUSE_AGENT_SA_ID,
+            displayName: MOUSE_AGENT_SA_DISPLAY_NAME,
+        };
+    }
+
+    private constructMouseAgentVertexRoleMember(): gcp.projects.IAMMember {
+        const mouseAgentVertexRoleMemberResourceName = `${this.parentComponentName}-${MOUSE_AGENT_VERTEX_ROLE_MEMBER_RESOURCE_SUFFIX}`;
+        const mouseAgentVertexRoleMemberArgs = this.constructMouseAgentVertexRoleMemberArgs();
+        return new gcp.projects.IAMMember(mouseAgentVertexRoleMemberResourceName, mouseAgentVertexRoleMemberArgs, { parent: this });
+    }
+
+    private constructMouseAgentVertexRoleMemberArgs(): gcp.projects.IAMMemberArgs {
+        return {
+            project: this.parentComponentArgs.projectId,
+            role: VERTEX_AI_USER_ROLE,
+            member: pulumi.interpolate`serviceAccount:${this.mouseAgentServiceAccount.email}`,
+        };
+    }
 }

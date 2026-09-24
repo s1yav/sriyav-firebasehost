@@ -1,4 +1,6 @@
 import { expect } from "chai";
+import * as fs from "fs";
+import * as path from "path";
 import { setupMocks, promiseOf } from "./setup";
 import { AgentHost } from "../agent-hosts/agent-host";
 import { MouseHost } from "../agent-hosts/mouse-host";
@@ -67,18 +69,27 @@ describe("AgentHost Component", () => {
             dockerRegistryName: "my-registry",
             location: "us-central1",
             imageTagFile: "mouse-agent-image-tag.json",
+            serviceAccount: "mouse-agent-sa@my-gitops-project.iam.gserviceaccount.com",
         });
 
         expect(mouseHost).to.be.an.instanceOf(MouseHost);
         expect(mouseHost.agentHost).to.exist;
         expect(mouseHost.mouseEndpoint).to.exist;
 
+        const mouseTagFile = path.resolve(__dirname, "../agent-hosts/image-tags/mouse-agent-image-tag.json");
+        const expectedMouseSha = JSON.parse(fs.readFileSync(mouseTagFile, "utf-8")).commitSha;
+
         const containerImage = await promiseOf(
             mouseHost.agentHost.agentHost.service.template.containers[0].image
         );
         expect(containerImage).to.equal(
-            "us-central1-docker.pkg.dev/my-gitops-project/my-registry/mouse:5f6be915a77fb93757f6fd7ca1191a6e04bb8124"
+            `us-central1-docker.pkg.dev/my-gitops-project/my-registry/mouse:${expectedMouseSha}`
         );
+
+        const serviceAccount = await promiseOf(
+            mouseHost.agentHost.agentHost.service.template.serviceAccount
+        );
+        expect(serviceAccount).to.equal("mouse-agent-sa@my-gitops-project.iam.gserviceaccount.com");
     });
 
     it("should fallback to preferredCommit if image tag file does not exist", async () => {
