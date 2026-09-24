@@ -56,6 +56,11 @@ export interface MouseHostArgs {
     serviceAccount?: pulumi.Input<string>;
 
     /**
+     * Optional environment variables for the container.
+     */
+    envs?: AgentHostArgs["envs"];
+
+    /**
      * Optional direct AgentHost arguments override.
      */
     agentHostArgs?: AgentHostArgs;
@@ -93,11 +98,16 @@ export class MouseHost extends pulumi.ComponentResource {
         }
 
         const agentImage = this.mouseHostArgs.agentImage ?? this.resolveDockerImage();
+        const defaultEnvs = [
+            { name: "MOUSE_PORT", value: "8080" },
+            { name: "PORT", value: "8080" },
+        ];
         return {
             agentImage,
             location: this.mouseHostArgs.location,
             serviceName: this.mouseHostArgs.serviceName,
             serviceAccount: this.mouseHostArgs.serviceAccount,
+            envs: this.mouseHostArgs.envs ?? defaultEnvs,
         };
     }
 

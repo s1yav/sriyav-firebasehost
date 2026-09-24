@@ -27,6 +27,11 @@ export interface AgentHostArgs {
     serviceAccount?: pulumi.Input<string>;
 
     /**
+     * Optional environment variables for the container.
+     */
+    envs?: CloudRunV2ServiceArgs["envs"];
+
+    /**
      * Optional direct Cloud Run v2 configuration arguments.
      */
     cloudRunArgs?: CloudRunV2ServiceArgs;
@@ -83,6 +88,7 @@ export class AgentHost extends pulumi.ComponentResource {
                 location: directArgs.location ?? this.parentComponentArgs.location ?? "us-central1",
                 image: this.parentComponentArgs.agentImage ?? directArgs.image,
                 serviceAccount: directArgs.serviceAccount ?? this.parentComponentArgs.serviceAccount,
+                envs: directArgs.envs ?? this.parentComponentArgs.envs,
             };
         }
 
@@ -91,6 +97,7 @@ export class AgentHost extends pulumi.ComponentResource {
             location: this.parentComponentArgs.location ?? "us-central1",
             image: this.parentComponentArgs.agentImage!,
             serviceAccount: this.parentComponentArgs.serviceAccount,
+            envs: this.parentComponentArgs.envs,
         };
     }
 }
