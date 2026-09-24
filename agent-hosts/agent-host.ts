@@ -7,13 +7,29 @@ import {
 
 export interface AgentHostArgs {
     /**
-     * Configuration arguments for the underlying Cloud Run v2 service.
+     * Container image location for the agent.
      */
-    cloudRunArgs: CloudRunV2ServiceArgs;
+    agentImage?: pulumi.Input<string>;
+
+    /**
+     * The GCP location/region for the service (e.g. "us-central1").
+     */
+    location?: pulumi.Input<string>;
+
+    /**
+     * Optional custom Cloud Run service name.
+     */
+    serviceName?: pulumi.Input<string>;
+
+    /**
+     * Optional direct Cloud Run v2 configuration arguments.
+     */
+    cloudRunArgs?: CloudRunV2ServiceArgs;
 }
 
 interface AgentHostOutputs {
-    readonly cloudRunService: CloudRunV2Service;
+    readonly agentHost: pulumi.Output<string>;
+    readonly serviceUrl: pulumi.Output<string>;
 }
 
 /**
@@ -21,7 +37,9 @@ interface AgentHostOutputs {
  * Provisions a Cloud Run v2 service using gcp-constructs inside an isolated AgentHost component boundary.
  */
 export class AgentHost extends pulumi.ComponentResource {
+    public readonly agentHost: CloudRunV2Service;
     public readonly cloudRunService: CloudRunV2Service;
+    public readonly serviceUrl: pulumi.Output<string>;
 
     private readonly parentComponentName: string;
     private readonly parentComponentArgs: AgentHostArgs;
@@ -32,7 +50,9 @@ export class AgentHost extends pulumi.ComponentResource {
         this.parentComponentName = name;
         this.parentComponentArgs = args;
 
-        this.cloudRunService = this.createCloudRunService();
+        this.agentHost = this.createCloudRunService();
+        this.cloudRunService = this.agentHost;
+        this.serviceUrl = this.agentHost.uri;
 
         this.parentComponentOutputs = this.constructParentComponentOutputs();
         this.registerOutputs(this.parentComponentOutputs);
@@ -40,12 +60,32 @@ export class AgentHost extends pulumi.ComponentResource {
 
     private constructParentComponentOutputs(): AgentHostOutputs {
         return {
-            cloudRunService: this.cloudRunService,
+            agentHost: this.serviceUrl,
+            serviceUrl: this.serviceUrl,
         };
     }
 
     private createCloudRunService(): CloudRunV2Service {
         const resourceName = `${this.parentComponentName}-${AGENT_HOST_CLOUDRUN_RESOURCE_SUFFIX}`;
-        return new CloudRunV2Service(resourceName, this.parentComponentArgs.cloudRunArgs, { parent: this });
+        const cloudRunArgs = this.constructCloudRunArgs(resourceName);
+        return new CloudRunV2Service(resourceName, cloudRunArgs, { parent: this });
+    }
+
+    private constructCloudRunArgs(resourceName: string): CloudRunV2ServiceArgs {
+        const directArgs = this.parentComponentArgs.cloudRunArgs;
+        if (directArgs) {
+            return {
+                ...directArgs,
+                serviceName: directArgs.serviceName ?? this.parentComponentArgs.serviceName ?? resourceName,
+                location: directArgs.location ?? this.parentComponentArgs.location ?? "us-central1",
+                image: this.parentComponentArgs.agentImage ?? directArgs.image,
+            };
+        }
+
+        return {
+            serviceName: this.parentComponentArgs.serviceName ?? resourceName,
+            location: this.parentComponentArgs.location ?? "us-central1",
+            image: this.parentComponentArgs.agentImage!,
+        };
     }
 }

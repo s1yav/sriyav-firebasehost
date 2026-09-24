@@ -12,6 +12,7 @@ export const PRODUCT_MANAGER_AGENT_HOST_COMPONENT_TYPE = "custom:components:Prod
 export const PRODUCT_MANAGER_IDENTITY_TYPE = "custom:components:ProductManagerIdentity";
 export const AGENT_BUILDER_IDENTITY_TYPE = "custom:components:AgentBuilderIdentity";
 export const AGENT_HOST_COMPONENT_TYPE = "custom:components:AgentHost";
+export const MOUSE_HOST_COMPONENT_TYPE = "custom:components:MouseHost";
 
 // Stack Resource Names
 export const ENABLE_SERVICE_COMPONENT_RESOURCE_NAME = "enable-service-component";
@@ -21,6 +22,11 @@ export const IDENTITY_COMPONENT_RESOURCE_NAME = "identity-component";
 export const APPHOST_COMPONENT_RESOURCE_NAME = "apphost-component";
 export const PRODUCT_MANAGER_AGENT_HOST_RESOURCE_NAME = "product-manager-agent-host";
 export const AGENT_HOST_COMPONENT_RESOURCE_NAME = "agent-host-component";
+export const MOUSE_HOST_RESOURCE_NAME = "mouse-host";
+
+// Image and Tag Constants
+export const MOUSE_AGENT_IMAGE_TAG_FILE = "mouse-agent-image-tag.json";
+export const MOUSE_AGENT_DEFAULT_IMAGE_NAME = "mouse";
 
 // Child Resource Suffixes
 export const AGENT_HOST_CLOUDRUN_RESOURCE_SUFFIX = "cloudrun";
