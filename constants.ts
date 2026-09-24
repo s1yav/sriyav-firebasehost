@@ -47,6 +47,8 @@ export const FIREBASE_SA_IMPERSONATOR_RESOURCE_SUFFIX = "firebase-sa-impersonato
 export const FIREBASE_SA_OWNER_ROLE_MEMBER_RESOURCE_SUFFIX = "firebase-sa-owner-role-member";
 export const MOUSE_AGENT_SA_RESOURCE_SUFFIX = "mouse-agent-sa";
 export const MOUSE_AGENT_VERTEX_ROLE_MEMBER_RESOURCE_SUFFIX = "mouse-agent-vertex-role-member";
+export const MOUSE_AGENT_LOG_WRITER_ROLE_MEMBER_RESOURCE_SUFFIX = "mouse-agent-log-writer-role-member";
+export const MOUSE_AGENT_TRACE_ROLE_MEMBER_RESOURCE_SUFFIX = "mouse-agent-trace-role-member";
 
 export const APPHOST_BACKEND_RESOURCE_SUFFIX = "appHostingBackend";
 export const APPHOST_BUILD_RESOURCE_SUFFIX = "appHostingBuild";
@@ -63,11 +65,14 @@ export const APPHOST_DOMAIN_CHILD_SUFFIX = "domain-component";
 export const FIREBASE_API_SERVICE_NAME = "firebase.googleapis.com";
 export const FIREBASE_APPHOSTING_API_SERVICE_NAME = "firebaseapphosting.googleapis.com";
 export const SECRET_MANAGER_API_SERVICE_NAME = "secretmanager.googleapis.com";
+export const AIPLATFORM_API_SERVICE_NAME = "aiplatform.googleapis.com";
 
 // IAM Roles & Service Account Constants
 export const TOKEN_CREATOR_ROLE = "roles/iam.serviceAccountTokenCreator";
 export const OWNER_ROLE = "roles/owner";
 export const VERTEX_AI_USER_ROLE = "roles/aiplatform.user";
+export const LOG_WRITER_ROLE = "roles/logging.logWriter";
+export const CLOUD_TRACE_AGENT_ROLE = "roles/cloudtrace.agent";
 export const FIREBASE_SA_ID = "sriyav-firebasehost-sa";
 export const FIREBASE_SA_DISPLAY_NAME = "Firebase App Hosting compute service account";
 export const MOUSE_AGENT_SA_ID = "mouse-agent-sa";

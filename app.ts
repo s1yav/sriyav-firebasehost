@@ -52,7 +52,7 @@ const apphostComponent = new ApphostComponent(apphostComponentResourceName, apph
 
 const mouseHostResourceName = `${stackName}-${MOUSE_HOST_RESOURCE_NAME}`;
 const mouseHostArgs = constructMouseHostArgs();
-const mouseHost = new MouseHost(mouseHostResourceName, mouseHostArgs, { dependsOn: identityComponent });
+const mouseHost = new MouseHost(mouseHostResourceName, mouseHostArgs, { dependsOn: [identityComponent, enableServiceComponent] });
 
 // Export the App Hosting URI and backend details
 export const apex = apphostComponent.appHostingDomain.domainId.apply((domain: string) => `https://${domain}`);

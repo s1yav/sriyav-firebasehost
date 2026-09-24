@@ -7,9 +7,13 @@ import {
     FIREBASE_SA_OWNER_ROLE_MEMBER_RESOURCE_SUFFIX,
     MOUSE_AGENT_SA_RESOURCE_SUFFIX,
     MOUSE_AGENT_VERTEX_ROLE_MEMBER_RESOURCE_SUFFIX,
+    MOUSE_AGENT_LOG_WRITER_ROLE_MEMBER_RESOURCE_SUFFIX,
+    MOUSE_AGENT_TRACE_ROLE_MEMBER_RESOURCE_SUFFIX,
     TOKEN_CREATOR_ROLE,
     OWNER_ROLE,
     VERTEX_AI_USER_ROLE,
+    LOG_WRITER_ROLE,
+    CLOUD_TRACE_AGENT_ROLE,
     FIREBASE_SA_ID,
     FIREBASE_SA_DISPLAY_NAME,
     MOUSE_AGENT_SA_ID,
@@ -33,6 +37,8 @@ interface IdentityComponentOutputs {
     readonly firebaseServiceAccountImpersonator: gcp.serviceaccount.IAMMember;
     readonly mouseAgentServiceAccount: gcp.serviceaccount.Account;
     readonly mouseAgentVertexRoleMember: gcp.projects.IAMMember;
+    readonly mouseAgentLogWriterRoleMember: gcp.projects.IAMMember;
+    readonly mouseAgentTraceRoleMember: gcp.projects.IAMMember;
 }
 
 export class IdentityComponent extends pulumi.ComponentResource {
@@ -41,6 +47,8 @@ export class IdentityComponent extends pulumi.ComponentResource {
     public readonly firebaseServiceAccountImpersonator: gcp.serviceaccount.IAMMember;
     public readonly mouseAgentServiceAccount: gcp.serviceaccount.Account;
     public readonly mouseAgentVertexRoleMember: gcp.projects.IAMMember;
+    public readonly mouseAgentLogWriterRoleMember: gcp.projects.IAMMember;
+    public readonly mouseAgentTraceRoleMember: gcp.projects.IAMMember;
     private readonly parentComponentName: string;
     private readonly parentComponentArgs: IdentityComponentArgs;
     private readonly parentComponentOutputs: IdentityComponentOutputs;
@@ -54,6 +62,8 @@ export class IdentityComponent extends pulumi.ComponentResource {
         this.firebaseServiceAccountImpersonator = this.constructFirebaseSaImpersonator();
         this.mouseAgentServiceAccount = this.constructMouseAgentSa();
         this.mouseAgentVertexRoleMember = this.constructMouseAgentVertexRoleMember();
+        this.mouseAgentLogWriterRoleMember = this.constructMouseAgentLogWriterRoleMember();
+        this.mouseAgentTraceRoleMember = this.constructMouseAgentTraceRoleMember();
 
         this.parentComponentOutputs = this.constructParentComponentOutputs();
         this.registerOutputs(this.parentComponentOutputs);
@@ -66,6 +76,8 @@ export class IdentityComponent extends pulumi.ComponentResource {
             firebaseServiceAccountImpersonator: this.firebaseServiceAccountImpersonator,
             mouseAgentServiceAccount: this.mouseAgentServiceAccount,
             mouseAgentVertexRoleMember: this.mouseAgentVertexRoleMember,
+            mouseAgentLogWriterRoleMember: this.mouseAgentLogWriterRoleMember,
+            mouseAgentTraceRoleMember: this.mouseAgentTraceRoleMember,
         };
     }
 
@@ -135,6 +147,34 @@ export class IdentityComponent extends pulumi.ComponentResource {
         return {
             project: this.parentComponentArgs.projectId,
             role: VERTEX_AI_USER_ROLE,
+            member: pulumi.interpolate`serviceAccount:${this.mouseAgentServiceAccount.email}`,
+        };
+    }
+
+    private constructMouseAgentLogWriterRoleMember(): gcp.projects.IAMMember {
+        const resourceName = `${this.parentComponentName}-${MOUSE_AGENT_LOG_WRITER_ROLE_MEMBER_RESOURCE_SUFFIX}`;
+        const args = this.constructMouseAgentLogWriterRoleMemberArgs();
+        return new gcp.projects.IAMMember(resourceName, args, { parent: this });
+    }
+
+    private constructMouseAgentLogWriterRoleMemberArgs(): gcp.projects.IAMMemberArgs {
+        return {
+            project: this.parentComponentArgs.projectId,
+            role: LOG_WRITER_ROLE,
+            member: pulumi.interpolate`serviceAccount:${this.mouseAgentServiceAccount.email}`,
+        };
+    }
+
+    private constructMouseAgentTraceRoleMember(): gcp.projects.IAMMember {
+        const resourceName = `${this.parentComponentName}-${MOUSE_AGENT_TRACE_ROLE_MEMBER_RESOURCE_SUFFIX}`;
+        const args = this.constructMouseAgentTraceRoleMemberArgs();
+        return new gcp.projects.IAMMember(resourceName, args, { parent: this });
+    }
+
+    private constructMouseAgentTraceRoleMemberArgs(): gcp.projects.IAMMemberArgs {
+        return {
+            project: this.parentComponentArgs.projectId,
+            role: CLOUD_TRACE_AGENT_ROLE,
             member: pulumi.interpolate`serviceAccount:${this.mouseAgentServiceAccount.email}`,
         };
     }

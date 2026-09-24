@@ -45,5 +45,19 @@ describe("IdentityComponent", () => {
         expect(vertexRole).to.equal("roles/aiplatform.user");
         expect(vertexProject).to.equal("test-project-id");
         expect(vertexMember).to.equal("serviceAccount:mouse-agent-sa@test-project-id.iam.gserviceaccount.com");
+
+        const logWriterRole = await promiseOf(component.mouseAgentLogWriterRoleMember.role);
+        const logWriterMember = await promiseOf(component.mouseAgentLogWriterRoleMember.member);
+        const logWriterProject = await promiseOf(component.mouseAgentLogWriterRoleMember.project);
+        expect(logWriterRole).to.equal("roles/logging.logWriter");
+        expect(logWriterProject).to.equal("test-project-id");
+        expect(logWriterMember).to.equal("serviceAccount:mouse-agent-sa@test-project-id.iam.gserviceaccount.com");
+
+        const traceRole = await promiseOf(component.mouseAgentTraceRoleMember.role);
+        const traceMember = await promiseOf(component.mouseAgentTraceRoleMember.member);
+        const traceProject = await promiseOf(component.mouseAgentTraceRoleMember.project);
+        expect(traceRole).to.equal("roles/cloudtrace.agent");
+        expect(traceProject).to.equal("test-project-id");
+        expect(traceMember).to.equal("serviceAccount:mouse-agent-sa@test-project-id.iam.gserviceaccount.com");
     });
 });

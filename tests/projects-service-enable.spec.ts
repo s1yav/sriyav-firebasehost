@@ -27,5 +27,13 @@ describe("EnableServiceComponent", () => {
         expect(apphostingServiceProject).to.equal("test-project-id");
         expect(apphostingServiceService).to.equal("firebaseapphosting.googleapis.com");
         expect(apphostingServiceDisableOnDestroy).to.be.false;
+
+        const aiplatformServiceProject = await promiseOf(component.aiplatformServiceEnabled.project);
+        const aiplatformServiceService = await promiseOf(component.aiplatformServiceEnabled.service);
+        const aiplatformServiceDisableOnDestroy = await promiseOf(component.aiplatformServiceEnabled.disableOnDestroy);
+
+        expect(aiplatformServiceProject).to.equal("test-project-id");
+        expect(aiplatformServiceService).to.equal("aiplatform.googleapis.com");
+        expect(aiplatformServiceDisableOnDestroy).to.be.false;
     });
 });
