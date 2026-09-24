@@ -63,9 +63,9 @@ describe("FirebaseApphost component", () => {
         const buildId = await promiseOf(component.appHostingBuild.buildId);
         const buildSourceContainerImage = await promiseOf(component.appHostingBuild.source.apply(s => s?.container?.image));
 
-        expect(buildId).to.equal("build-1e52672-v3");
+        expect(buildId).to.equal("build-407bbe1-v3");
         expect(buildSourceContainerImage).to.equal(
-            "us-central1-docker.pkg.dev/gitops-project-id/my-docker-repo/sriyav-portfolio:1e52672f31ec5b649ce7cd4a4c1257eaa1f7b674"
+            "us-central1-docker.pkg.dev/gitops-project-id/my-docker-repo/sriyav-portfolio:407bbe159998585209782c6c517217cad6cd0509"
         );
 
         // 3. Verify App Hosting Traffic

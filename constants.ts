@@ -25,7 +25,10 @@ export const AGENT_HOST_COMPONENT_RESOURCE_NAME = "agent-host-component";
 export const MOUSE_HOST_RESOURCE_NAME = "mouse-host";
 
 // Image and Tag Constants
+export const AGENT_HOSTS_IMAGE_TAGS_DIR = "image-tags";
 export const MOUSE_AGENT_IMAGE_TAG_FILE = "mouse-agent-image-tag.json";
+export const PRODUCT_MANAGERS_IMAGE_TAG_FILE = "product-managers-image-tag.json";
+export const ASSISTANTS_IMAGE_TAG_FILE = "assistants-image-tag.json";
 export const MOUSE_AGENT_DEFAULT_IMAGE_NAME = "mouse";
 
 // Child Resource Suffixes

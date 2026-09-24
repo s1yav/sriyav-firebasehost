@@ -38,7 +38,6 @@ interface AgentHostOutputs {
  */
 export class AgentHost extends pulumi.ComponentResource {
     public readonly agentHost: CloudRunV2Service;
-    public readonly cloudRunService: CloudRunV2Service;
     public readonly serviceUrl: pulumi.Output<string>;
 
     private readonly parentComponentName: string;
@@ -51,7 +50,6 @@ export class AgentHost extends pulumi.ComponentResource {
         this.parentComponentArgs = args;
 
         this.agentHost = this.createCloudRunService();
-        this.cloudRunService = this.agentHost;
         this.serviceUrl = this.agentHost.uri;
 
         this.parentComponentOutputs = this.constructParentComponentOutputs();

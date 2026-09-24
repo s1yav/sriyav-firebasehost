@@ -21,10 +21,10 @@ describe("AgentHost Component", () => {
         });
 
         expect(agentHost).to.be.an.instanceOf(AgentHost);
-        expect(agentHost.cloudRunService).to.exist;
+        expect(agentHost.agentHost).to.exist;
 
-        const location = await promiseOf(agentHost.cloudRunService.service.location);
-        const name = await promiseOf(agentHost.cloudRunService.service.name);
+        const location = await promiseOf(agentHost.agentHost.service.location);
+        const name = await promiseOf(agentHost.agentHost.service.name);
 
         expect(location).to.equal("us-central1");
         expect(name).to.equal("agent-host-service");
@@ -38,10 +38,10 @@ describe("AgentHost Component", () => {
         });
 
         expect(agentHost).to.be.an.instanceOf(AgentHost);
-        expect(agentHost.cloudRunService).to.exist;
+        expect(agentHost.agentHost).to.exist;
         expect(agentHost.serviceUrl).to.exist;
 
-        const name = await promiseOf(agentHost.cloudRunService.service.name);
+        const name = await promiseOf(agentHost.agentHost.service.name);
         expect(name).to.equal("custom-agent-service");
     });
 
@@ -74,7 +74,7 @@ describe("AgentHost Component", () => {
         expect(mouseHost.mouseEndpoint).to.exist;
 
         const containerImage = await promiseOf(
-            mouseHost.agentHost.cloudRunService.service.template.containers[0].image
+            mouseHost.agentHost.agentHost.service.template.containers[0].image
         );
         expect(containerImage).to.equal(
             "us-central1-docker.pkg.dev/my-gitops-project/my-registry/mouse:5f6be915a77fb93757f6fd7ca1191a6e04bb8124"
@@ -91,7 +91,7 @@ describe("AgentHost Component", () => {
         });
 
         const containerImage = await promiseOf(
-            mouseHost.agentHost.cloudRunService.service.template.containers[0].image
+            mouseHost.agentHost.agentHost.service.template.containers[0].image
         );
         expect(containerImage).to.equal(
             "us-central1-docker.pkg.dev/my-gitops-project/my-registry/mouse:fallbacksha999"

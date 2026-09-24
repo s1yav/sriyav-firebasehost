@@ -4,6 +4,7 @@ import * as path from "path";
 import { AgentHost, AgentHostArgs } from "./agent-host";
 import {
     MOUSE_HOST_COMPONENT_TYPE,
+    AGENT_HOSTS_IMAGE_TAGS_DIR,
     MOUSE_AGENT_IMAGE_TAG_FILE,
     MOUSE_AGENT_DEFAULT_IMAGE_NAME,
 } from "../constants";
@@ -103,12 +104,30 @@ export class MouseHost extends pulumi.ComponentResource {
 
     private readCommitShaFromFile(): string {
         const tagFile = this.mouseHostArgs.imageTagFile ?? MOUSE_AGENT_IMAGE_TAG_FILE;
-        const filePath = path.isAbsolute(tagFile)
-            ? tagFile
-            : path.join(__dirname, "..", tagFile);
+        const filePath = this.resolveTagFilePath(tagFile);
         const content = fs.readFileSync(filePath, "utf8");
         const parsed = JSON.parse(content);
         return parsed.commitSha ? parsed.commitSha.toLowerCase().trim() : (this.mouseHostArgs.preferredCommit ?? "latest");
+    }
+
+    private resolveTagFilePath(tagFile: string): string {
+        if (path.isAbsolute(tagFile)) {
+            return tagFile;
+        }
+
+        const candidatePaths = [
+            path.join(__dirname, AGENT_HOSTS_IMAGE_TAGS_DIR, tagFile),
+            path.join(__dirname, tagFile),
+            path.join(__dirname, "..", tagFile),
+        ];
+
+        for (const candidate of candidatePaths) {
+            if (fs.existsSync(candidate)) {
+                return candidate;
+            }
+        }
+
+        return candidatePaths[0];
     }
 
     private getFallbackCommitSha(err: unknown): string {
