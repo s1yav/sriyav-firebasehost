@@ -7,7 +7,7 @@
   "include": [
     "**/*.ts",
     "../components/**/*.ts",
-    "../agent-platform/**/*.ts",
+    "../agent-hosts/**/*.ts",
     "../app.ts",
     "../configuration.ts"
   ]

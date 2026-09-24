@@ -11,7 +11,7 @@ export const APPHOST_DOMAIN_COMPONENT_TYPE = "custom:components:ApphostDomain";
 export const PRODUCT_MANAGER_AGENT_HOST_COMPONENT_TYPE = "custom:components:ProductManagerAgentHost";
 export const PRODUCT_MANAGER_IDENTITY_TYPE = "custom:components:ProductManagerIdentity";
 export const AGENT_BUILDER_IDENTITY_TYPE = "custom:components:AgentBuilderIdentity";
-export const PLATFORM_COMPONENT_TYPE = "custom:components:Platform";
+export const AGENT_HOST_COMPONENT_TYPE = "custom:components:AgentHost";
 
 // Stack Resource Names
 export const ENABLE_SERVICE_COMPONENT_RESOURCE_NAME = "enable-service-component";
@@ -20,10 +20,10 @@ export const WEB_APP_COMPONENT_RESOURCE_NAME = "web-app-component";
 export const IDENTITY_COMPONENT_RESOURCE_NAME = "identity-component";
 export const APPHOST_COMPONENT_RESOURCE_NAME = "apphost-component";
 export const PRODUCT_MANAGER_AGENT_HOST_RESOURCE_NAME = "product-manager-agent-host";
-export const PLATFORM_COMPONENT_RESOURCE_NAME = "platform-component";
+export const AGENT_HOST_COMPONENT_RESOURCE_NAME = "agent-host-component";
 
 // Child Resource Suffixes
-export const PLATFORM_CLOUDRUN_RESOURCE_SUFFIX = "cloudrun";
+export const AGENT_HOST_CLOUDRUN_RESOURCE_SUFFIX = "cloudrun";
 export const FIREBASE_PROJECT_RESOURCE_SUFFIX = "firebase-project";
 export const WEB_APP_RESOURCE_SUFFIX = "firebase-webapp";
 export const PRODUCT_MANAGER_AGENT_HOST_RESOURCE_SUFFIX = "pm-agent-host";
