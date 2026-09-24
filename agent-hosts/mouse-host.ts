@@ -88,11 +88,11 @@ export class MouseHost extends pulumi.ComponentResource {
     }
 
     private createAgentHost(name: string): AgentHost {
-        const agentHostArgs = this.resolveAgentHostArgs();
+        const agentHostArgs = this.resolveAgentHostArgs(name);
         return new AgentHost(`${name}-agent-host`, agentHostArgs, { parent: this });
     }
 
-    private resolveAgentHostArgs(): AgentHostArgs {
+    private resolveAgentHostArgs(name: string): AgentHostArgs {
         if (this.mouseHostArgs.agentHostArgs) {
             return this.mouseHostArgs.agentHostArgs;
         }
@@ -104,7 +104,7 @@ export class MouseHost extends pulumi.ComponentResource {
         return {
             agentImage,
             location: this.mouseHostArgs.location,
-            serviceName: this.mouseHostArgs.serviceName,
+            serviceName: this.mouseHostArgs.serviceName ?? name,
             serviceAccount: this.mouseHostArgs.serviceAccount,
             envs: this.mouseHostArgs.envs ?? defaultEnvs,
         };

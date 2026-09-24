@@ -81,7 +81,7 @@ export class AgentHost extends pulumi.ComponentResource {
 
     private constructCloudRunArgs(resourceName: string): CloudRunV2ServiceArgs {
         const directArgs = this.parentComponentArgs.cloudRunArgs;
-        const candidateName = directArgs?.serviceName ?? this.parentComponentArgs.serviceName ?? resourceName;
+        const candidateName = directArgs?.serviceName ?? this.parentComponentArgs.serviceName ?? this.parentComponentName;
         const serviceName = this.resolveServiceName(candidateName);
 
         if (directArgs) {
