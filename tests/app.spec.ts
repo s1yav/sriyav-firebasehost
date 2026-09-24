@@ -38,5 +38,6 @@ describe("Pulumi Stack app.ts", () => {
         expect(subdomain).to.equal("https://www.sriyav.com");
         expect(backendName).to.equal("sriyav-portfolio");
         expect(appName).to.equal("sriyav-portfolio");
+        expect(app.mouseEndpoint).to.exist;
     });
 });

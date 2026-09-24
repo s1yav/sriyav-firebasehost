@@ -46,6 +46,11 @@ export interface MouseHostArgs {
     preferredCommit?: string;
 
     /**
+     * Optional custom Cloud Run service name.
+     */
+    serviceName?: pulumi.Input<string>;
+
+    /**
      * Optional direct AgentHost arguments override.
      */
     agentHostArgs?: AgentHostArgs;
@@ -86,6 +91,7 @@ export class MouseHost extends pulumi.ComponentResource {
         return {
             agentImage,
             location: this.mouseHostArgs.location,
+            serviceName: this.mouseHostArgs.serviceName,
         };
     }
 
