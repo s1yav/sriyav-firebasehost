@@ -81,10 +81,13 @@ export class AgentHost extends pulumi.ComponentResource {
 
     private constructCloudRunArgs(resourceName: string): CloudRunV2ServiceArgs {
         const directArgs = this.parentComponentArgs.cloudRunArgs;
+        const candidateName = directArgs?.serviceName ?? this.parentComponentArgs.serviceName ?? resourceName;
+        const serviceName = this.resolveServiceName(candidateName);
+
         if (directArgs) {
             return {
                 ...directArgs,
-                serviceName: directArgs.serviceName ?? this.parentComponentArgs.serviceName ?? resourceName,
+                serviceName,
                 location: directArgs.location ?? this.parentComponentArgs.location ?? "us-central1",
                 image: this.parentComponentArgs.agentImage ?? directArgs.image,
                 serviceAccount: directArgs.serviceAccount ?? this.parentComponentArgs.serviceAccount,
@@ -93,11 +96,24 @@ export class AgentHost extends pulumi.ComponentResource {
         }
 
         return {
-            serviceName: this.parentComponentArgs.serviceName ?? resourceName,
+            serviceName,
             location: this.parentComponentArgs.location ?? "us-central1",
             image: this.parentComponentArgs.agentImage!,
             serviceAccount: this.parentComponentArgs.serviceAccount,
             envs: this.parentComponentArgs.envs,
         };
     }
+
+    private resolveServiceName(candidate: pulumi.Input<string>): pulumi.Input<string> {
+        return pulumi.output(candidate).apply((name: string) => {
+            if (name.length < 50) {
+                return name;
+            }
+            if (this.parentComponentName.length < 50) {
+                return this.parentComponentName;
+            }
+            return name.slice(0, 49).replace(/-+$/, "");
+        });
+    }
 }
+
