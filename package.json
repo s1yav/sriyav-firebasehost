@@ -16,6 +16,6 @@
     "dependencies": {
         "@pulumi/gcp": "^9.0.0",
         "@pulumi/pulumi": "^3.113.0",
-        "gcp-constructs": "file:../gcp-constructs"
+        "gcp-constructs": "git+https://github.com/s1yav/gcp-constructs.git"
     }
 }
