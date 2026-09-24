@@ -89,7 +89,7 @@ export class MouseHost extends pulumi.ComponentResource {
 
     private createAgentHost(name: string): AgentHost {
         const agentHostArgs = this.resolveAgentHostArgs();
-        return new AgentHost(`${name}-host`, agentHostArgs, { parent: this });
+        return new AgentHost(`${name}-agent-host`, agentHostArgs, { parent: this });
     }
 
     private resolveAgentHostArgs(): AgentHostArgs {
