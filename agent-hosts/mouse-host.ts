@@ -100,7 +100,6 @@ export class MouseHost extends pulumi.ComponentResource {
         const agentImage = this.mouseHostArgs.agentImage ?? this.resolveDockerImage();
         const defaultEnvs = [
             { name: "MOUSE_PORT", value: "8080" },
-            { name: "PORT", value: "8080" },
         ];
         return {
             agentImage,
